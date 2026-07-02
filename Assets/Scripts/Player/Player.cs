@@ -84,7 +84,7 @@ public class Player : MonoBehaviour, IDamagable
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (!IsDead)
-            OnDeath?.Invoke();
+            OnDeath.Invoke();
     }
 
     public void Heal(float amount)

@@ -26,13 +26,6 @@ public class PlayerCameraController : MonoBehaviour
 
         targetZoom = currentZoom = orbital.Radius;
     }
-
-    // Called by SceneBootstrapper once the avatar has been instantiated.
-    public void Initialize(PlayerInput input)
-    {
-        playerInput = input;
-    }
-
     private void Update()
     {
         // Guard: do nothing until Initialize() has been called.
@@ -45,5 +38,11 @@ public class PlayerCameraController : MonoBehaviour
 
         currentZoom = Mathf.Lerp(currentZoom, targetZoom, Time.deltaTime * zoomLerpSpeed);
         orbital.Radius = currentZoom;
+    }
+
+    // Called by SceneBootstrapper once the avatar has been instantiated.
+    public void Initialize(PlayerInput input)
+    {
+        playerInput = input;
     }
 }

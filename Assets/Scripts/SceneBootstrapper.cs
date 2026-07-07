@@ -24,7 +24,7 @@ public class SceneBootstrapper : MonoBehaviour
             return;
         }
 
-        // Instantiate avatar at spawn point position and rotation.
+        // Instantiate avatar at spawn point position and rotation
         GameObject avatar = Instantiate(avatarPrefab, spawnPoint.position, spawnPoint.rotation);
 
         PlayerInput playerInput = avatar.GetComponent<PlayerInput>();
@@ -53,6 +53,12 @@ public class SceneBootstrapper : MonoBehaviour
         // Wire up cross-object dependencies.
         playerCameraController.Initialize(playerInput);
         playerController.Initialize(Camera.main.transform);
+
+        // Verbindet das persistente Player-Singleton mit dem Avatar dieser Szene
+        if (Player.Instance != null)
+            Player.Instance.BindAvatar(avatar.transform, playerController);
+        else
+            Debug.LogWarning("[SceneBootstrapper] Player.Instance is null - Enemies können den Avatar nicht anvisieren, Knockback wird nicht funktionieren.");
 
         // Set Cinemachine follow and look-at targets to the avatar.
         cinemachineCamera.Follow = avatar.transform;

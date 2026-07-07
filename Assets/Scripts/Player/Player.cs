@@ -19,6 +19,12 @@ public class Player : MonoBehaviour, IDamagable
     [SerializeField] private float globalCritRate = 0f; // 0-1 probability
     [SerializeField] private float globalCritDamage = 1.25f; // Multiplier
     [SerializeField] private float globalProjectileCount = 1f;
+
+    [Header("Knockback")]
+    [SerializeField] private float pushForceMultiplier = 0.15f;
+    // Roher Impuls = info.Amount * pushForceMultiplier. Die tatsächliche Push-Geschwindigkeit
+    // wird zusätzlich von PlayerController.maxPushSpeed gedeckelt - dieser Wert steuert primär,
+    // ab welcher Schadenshöhe der Push überhaupt spürbar wird.
     #endregion
 
     // Runtime State
@@ -26,6 +32,7 @@ public class Player : MonoBehaviour, IDamagable
     private float currentHealth;
     private float currentXp;
     private int currentLevel;
+    private PlayerController playerController;
 
     // Read-only Properties
 
@@ -39,6 +46,10 @@ public class Player : MonoBehaviour, IDamagable
     public float GlobalCritRate => globalCritRate;
     public float GlobalCritDamage => globalCritDamage;
     public float GlobalProjectileCount => globalProjectileCount;
+
+    // Der Avatar in der aktuellen Szene - unterscheidet sich von diesem persistenten
+    // Singleton-GameObject selbst. Wird von SceneBootstrapper via BindAvatar() gesetzt.
+    public Transform AvatarTransform { get; private set; }
 
     // Events - consumers (UI, Audio, VFX) Subscribe here; Player never touches them directly
 
@@ -74,6 +85,13 @@ public class Player : MonoBehaviour, IDamagable
 
     // Public API
 
+    // Wird von SceneBootstrapper aufgerufen, sobald Avatar und PlayerController existieren.
+    public void BindAvatar(Transform avatarTransform, PlayerController controller)
+    {
+        AvatarTransform = avatarTransform;
+        playerController = controller;
+    }
+
     public void TakeDamage(DamageInfo info)
     {
         if (IsDead) return;
@@ -83,8 +101,10 @@ public class Player : MonoBehaviour, IDamagable
         OnDamageTaken?.Invoke(info);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
-        if (!IsDead)
-            OnDeath.Invoke();
+        ApplyKnockback(info);
+
+        if (IsDead)
+            OnDeath?.Invoke();
     }
 
     public void Heal(float amount)
@@ -107,5 +127,14 @@ public class Player : MonoBehaviour, IDamagable
             currentLevel++;
             OnLevelUp?.Invoke(currentLevel);
         }
+    }
+
+    private void ApplyKnockback(DamageInfo info)
+    {
+        if (playerController == null) return;
+        if (info.HitDirection.sqrMagnitude <= 0.0001f) return; // keine Richtung übergeben, kein Push möglich
+
+        Vector3 impulse = info.HitDirection.normalized * info.Amount * pushForceMultiplier;
+        playerController.ApplyPush(impulse);
     }
 }

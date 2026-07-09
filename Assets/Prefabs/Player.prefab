@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1645538109983959996}
   - component: {fileID: 5615694910611674513}
   - component: {fileID: 4506477288792874641}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Goggles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 7160473824543694324}
   - component: {fileID: 2473444221282962140}
   - component: {fileID: 1079995717949460788}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: PlayerModell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -239,7 +239,7 @@ GameObject:
   - component: {fileID: 4515906618942529039}
   - component: {fileID: 4455803535120024904}
   - component: {fileID: 8089516669609464684}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -313,3 +313,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 8
   gravity: -9.81
+  maxPushSpeed: 12
+  pushDecay: 4
+  pushMoveControl: 0.35

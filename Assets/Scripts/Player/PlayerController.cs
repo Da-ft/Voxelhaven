@@ -21,10 +21,13 @@ public class PlayerController : MonoBehaviour
     private Transform cameraTransform;
     private Vector3 verticalVelocity;
     private Vector3 pushVelocity;
+    private Vector3 currentHorizontalVelocity;
 
     public Vector3 Velocity => verticalVelocity + pushVelocity;
     public bool IsGrounded => controller.isGrounded;
     public bool IsBeingPushed => pushVelocity.sqrMagnitude > 0.01f;
+
+    public Vector3 HorizontalVelocity => currentHorizontalVelocity;
 
     // Lifecycle
 
@@ -55,10 +58,11 @@ public class PlayerController : MonoBehaviour
         DecayPush();
         ApplyGravity();
 
-        // Alle drei Bewegungsquellen (Eingabe, Push, Gravitation) werden zu EINEM Move()-Aufruf pro Frame kombiniert, statt mehrfach unabhängig zu bewegen - sonst ist die gegenseitige Beeinflussung nicht mehr nachvollziehbar
         float controlFactor = IsBeingPushed ? pushMoveControl : 1f;
-        Vector3 combined = inputVelocity * controlFactor + pushVelocity + verticalVelocity;
+        currentHorizontalVelocity = inputVelocity * controlFactor;
 
+        // Alle drei Bewegungsquellen (Eingabe, Push, Gravitation) werden zu EINEM Move()-Aufruf pro Frame kombiniert, statt mehrfach unabhängig zu bewegen.
+        Vector3 combined = currentHorizontalVelocity + pushVelocity + verticalVelocity;
         controller.Move(combined * Time.deltaTime);
     }
 

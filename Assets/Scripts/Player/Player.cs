@@ -48,8 +48,13 @@ public class Player : MonoBehaviour, IDamagable
     public float GlobalProjectileCount => globalProjectileCount;
 
     // Der Avatar in der aktuellen Szene - unterscheidet sich von diesem persistenten
-    // Singleton-GameObject selbst. Wird von SceneBootstrapper via BindAvatar() gesetzt.
+    // Singleton-GameObject selbst, Wird von SceneBootstrapper via BindAvatar() gesetzt
     public Transform AvatarTransform { get; private set; }
+
+    // Fassade auf PlayerController.HorizontalVelocity, damit Enemy-Skripte (z. B. für
+    // Leading Shots) nicht direkt auf PlayerController zugreifen müssen.
+    public Vector3 AvatarVelocity => playerController != null ? playerController.HorizontalVelocity : Vector3.zero;
+
 
     // Events - consumers (UI, Audio, VFX) Subscribe here; Player never touches them directly
 

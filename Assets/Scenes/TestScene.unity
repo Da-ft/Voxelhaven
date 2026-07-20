@@ -389,6 +389,66 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
+--- !u!1 &200983822
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 200983825}
+  - component: {fileID: 200983824}
+  - component: {fileID: 200983823}
+  m_Layer: 0
+  m_Name: VisualScripting SceneVariables
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &200983823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200983822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 765181c9ef4b24d32a4f7cbd2ef370dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.VisualScripting.Core::Unity.VisualScripting.SceneVariables
+--- !u!114 &200983824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200983822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e741851cba3ad425c91ecf922cc6b379, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.VisualScripting.Core::Unity.VisualScripting.Variables
+  _data:
+    _json: '{"declarations":{"Kind":"Scene","collection":{"$content":[],"$version":"A"},"$version":"A"}}'
+    _objectReferences: []
+--- !u!4 &200983825
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200983822}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &274205179
 GameObject:
   m_ObjectHideFlags: 0
@@ -799,11 +859,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 925226911}
-  - component: {fileID: 925226910}
-  - component: {fileID: 925226909}
-  - component: {fileID: 925226908}
-  - component: {fileID: 925226907}
-  - component: {fileID: 925226912}
   m_Layer: 0
   m_Name: EnemyRanged
   m_TagString: Untagged
@@ -811,63 +866,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &925226907
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 925226905}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff7f73524eb935f4ca0be263d074a1b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyXoReward
-  definition: {fileID: 11400000, guid: e659ee7d4f0cf7b4295565342a258426, type: 2}
---- !u!114 &925226908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 925226905}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31cb670c5f966ec40abba6e6c3ef9a76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  definition: {fileID: 11400000, guid: e659ee7d4f0cf7b4295565342a258426, type: 2}
---- !u!114 &925226909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 925226905}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e88ceb7d2a7663469eceef04100c8f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  definition: {fileID: 11400000, guid: e659ee7d4f0cf7b4295565342a258426, type: 2}
-  separationRadius: 1
-  separationStrength: 3
-  enemyLayerMask:
-    serializedVersion: 2
-    m_Bits: 64
-  repositionTolerance: 0.5
---- !u!114 &925226910
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 925226905}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 538d7cd6bc7b44f4897f2002c202efc1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyTargeting
 --- !u!4 &925226911
 Transform:
   m_ObjectHideFlags: 0
@@ -884,21 +882,6 @@ Transform:
   - {fileID: 1981097040}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &925226912
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 925226905}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1e1b1303a6e3a84f9201b6980020112, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyRangedAttack
-  definition: {fileID: 11400000, guid: e659ee7d4f0cf7b4295565342a258426, type: 2}
-  damage: 8
-  muzzlePoint: {fileID: 9745124}
 --- !u!1 &1100200427
 GameObject:
   m_ObjectHideFlags: 0
@@ -1049,7 +1032,6 @@ MonoBehaviour:
   globalCritRate: 0
   globalCritDamage: 1.25
   globalProjectileCount: 1
-  pushForceMultiplier: 1
 --- !u!4 &1112487955
 Transform:
   m_ObjectHideFlags: 0
@@ -1756,11 +1738,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2023745836}
-  - component: {fileID: 2023745835}
-  - component: {fileID: 2023745834}
-  - component: {fileID: 2023745833}
-  - component: {fileID: 2023745832}
-  - component: {fileID: 2023745837}
   m_Layer: 0
   m_Name: EnemyMelee
   m_TagString: Untagged
@@ -1768,63 +1745,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2023745832
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2023745830}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff7f73524eb935f4ca0be263d074a1b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyXoReward
-  definition: {fileID: 11400000, guid: 78e21d914468fc148987294ad8df0055, type: 2}
---- !u!114 &2023745833
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2023745830}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31cb670c5f966ec40abba6e6c3ef9a76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  definition: {fileID: 11400000, guid: 78e21d914468fc148987294ad8df0055, type: 2}
---- !u!114 &2023745834
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2023745830}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e88ceb7d2a7663469eceef04100c8f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  definition: {fileID: 11400000, guid: 78e21d914468fc148987294ad8df0055, type: 2}
-  separationRadius: 1
-  separationStrength: 3
-  enemyLayerMask:
-    serializedVersion: 2
-    m_Bits: 64
-  repositionTolerance: 0.5
---- !u!114 &2023745835
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2023745830}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 538d7cd6bc7b44f4897f2002c202efc1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyTargeting
 --- !u!4 &2023745836
 Transform:
   m_ObjectHideFlags: 0
@@ -1841,26 +1761,6 @@ Transform:
   - {fileID: 1470752985}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2023745837
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2023745830}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b9ebfc5cf5b9de46bbaa2c64cc6924a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyMeleeAttack
-  definition: {fileID: 11400000, guid: 78e21d914468fc148987294ad8df0055, type: 2}
-  damage: 10
-  windupDuration: 0.3
-  hitRadius: 1
-  hitForwardOffset: 0.5
-  hittableLayerMask:
-    serializedVersion: 2
-    m_Bits: 8
 --- !u!1 &2057593579
 GameObject:
   m_ObjectHideFlags: 0
@@ -1925,3 +1825,4 @@ SceneRoots:
   - {fileID: 2023745836}
   - {fileID: 925226911}
   - {fileID: 1118186045}
+  - {fileID: 200983825}

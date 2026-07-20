@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class Player : MonoBehaviour, IDamagable
+public class Player : MonoBehaviour
 {
     public static Player Instance { get; private set; }
 
@@ -19,12 +19,6 @@ public class Player : MonoBehaviour, IDamagable
     [SerializeField] private float globalCritRate = 0f; // 0-1 probability
     [SerializeField] private float globalCritDamage = 1.25f; // Multiplier
     [SerializeField] private float globalProjectileCount = 1f;
-
-    [Header("Knockback")]
-    [SerializeField] private float pushForceMultiplier = 0.15f;
-    // Roher Impuls = info.Amount * pushForceMultiplier. Die tatsächliche Push-Geschwindigkeit
-    // wird zusätzlich von PlayerController.maxPushSpeed gedeckelt - dieser Wert steuert primär,
-    // ab welcher Schadenshöhe der Push überhaupt spürbar wird.
     #endregion
 
     // Runtime State
@@ -59,8 +53,6 @@ public class Player : MonoBehaviour, IDamagable
     // Events - consumers (UI, Audio, VFX) Subscribe here; Player never touches them directly
 
     public event Action<float, float> OnHealthChanged; // (currentHealth, MaxHealth)
-    public event Action<DamageInfo> OnDamageTaken; // Seperate from OnHealthChanged for crit/type reactions
-    public event Action OnDeath;
     public event Action<float> OnXpGained; // (amount gained this call)
     public event Action<int> OnLevelUp; // (new level)
 
@@ -97,19 +89,9 @@ public class Player : MonoBehaviour, IDamagable
         playerController = controller;
     }
 
-    public void TakeDamage(DamageInfo info)
+    public void TakeDamage()
     {
-        if (IsDead) return;
-
-        currentHealth = Mathf.Clamp(currentHealth - info.Amount, 0f, maxHealth);
-
-        OnDamageTaken?.Invoke(info);
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
-
-        ApplyKnockback(info);
-
-        if (IsDead)
-            OnDeath?.Invoke();
+       //TODO: Insert Damage Logic
     }
 
     public void Heal(float amount)
@@ -132,14 +114,5 @@ public class Player : MonoBehaviour, IDamagable
             currentLevel++;
             OnLevelUp?.Invoke(currentLevel);
         }
-    }
-
-    private void ApplyKnockback(DamageInfo info)
-    {
-        if (playerController == null) return;
-        if (info.HitDirection.sqrMagnitude <= 0.0001f) return; // keine Richtung übergeben, kein Push möglich
-
-        Vector3 impulse = info.HitDirection.normalized * info.Amount * pushForceMultiplier;
-        playerController.ApplyPush(impulse);
     }
 }

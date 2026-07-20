@@ -48,16 +48,10 @@ public class Projectile : MonoBehaviour
         // Setzt eine korrekt konfigurierte Physik-Kollisionsmatrix voraus: Dieser Layer darf ausschlieﬂlich mit dem Spieler-Layer kollidieren, nicht mit anderen Gegnern
         if (Player.Instance == null) return;
 
-        DamageInfo info = new DamageInfo(
-            amount: damage,
-            source: source,
-            type: DamageType.Physical,
-            isCritical: false,
-            hitPoint: transform.position,
-            hitDirection: direction
-        );
+        // TODO: Schadensberechnung
 
-        Player.Instance.TakeDamage(info);
+
+        Player.Instance.TakeDamage();
         ReturnToPool();
     }
 

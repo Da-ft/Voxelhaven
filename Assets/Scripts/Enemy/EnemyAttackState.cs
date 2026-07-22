@@ -10,7 +10,17 @@ public class EnemyAttackState : IEnemyState
 
     public void UpdateState(EnemyBrain enemy)
     {
+        if (enemy.IsActionLocked) return;
         if (enemy.PlayerTarget == null) return;
+
+        Vector3 lookDirection = enemy.PlayerTarget.position - enemy.transform.position;
+        lookDirection.y = 0f; // Verhindert, dass der Gegner sich nach oben/unten neigt
+        if (lookDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
+            // Geschmeidiges Mitdrehen
+            enemy.transform.rotation = Quaternion.Slerp(enemy.transform.rotation, targetRotation, Time.deltaTime * 5f);
+        }
 
         // rangecheck, if not in range go back to chasing
         float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.PlayerTarget.position);

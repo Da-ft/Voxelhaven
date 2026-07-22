@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 65b9f12cf91146b40af09b5e3d017d91, type: 3}
-  m_Name: Enemy Melee Profile
+  m_Name: EnemyMeleeProfile
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMeleeProfile
   enemyName: 
   maxHealth: 100

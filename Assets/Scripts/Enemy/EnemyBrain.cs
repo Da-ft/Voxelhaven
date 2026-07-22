@@ -12,6 +12,7 @@ public class EnemyBrain : MonoBehaviour
     [Header("Runtime Variables (Read Only)")]
     public float currentHealth;
     public float currentAttackCooldown;
+    public bool IsActionLocked = false;
 
     // FSM
     private IEnemyState currentState;

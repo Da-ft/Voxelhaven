@@ -197,7 +197,7 @@ GameObject:
   - component: {fileID: -99168578377668932}
   m_Layer: 0
   m_Name: EnemyRanged
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -234,6 +234,7 @@ MonoBehaviour:
   agent: {fileID: 2872788832151704682}
   currentHealth: 0
   currentAttackCooldown: 0
+  IsActionLocked: 0
 --- !u!195 &2872788832151704682
 NavMeshAgent:
   m_ObjectHideFlags: 0

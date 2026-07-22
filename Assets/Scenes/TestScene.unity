@@ -1296,50 +1296,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1118186043
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1118186045}
-  - component: {fileID: 1118186044}
-  m_Layer: 0
-  m_Name: ProjectilePool
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1118186044
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1118186043}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 203b9e0dfc4f8434da55178ab02e1bae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectilePool
---- !u!4 &1118186045
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1118186043}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.20544, y: 0, z: 5.55476}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1185426750
 GameObject:
   m_ObjectHideFlags: 0
@@ -1383,6 +1339,7 @@ GameObject:
   - component: {fileID: 1571917509}
   - component: {fileID: 1571917511}
   - component: {fileID: 1571917512}
+  - component: {fileID: 1571917513}
   m_Layer: 0
   m_Name: WaveSpawner
   m_TagString: Untagged
@@ -1434,10 +1391,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaveSpawner
   enemyPrefab: {fileID: 5448052128714685552, guid: c74b4a68d2e2f5a4191b03e45a64032d, type: 3}
-  amountToSpawn: 5
+  amountToSpawn: 3
   spawnRadius: 15
   timeBetweenSpawns: 0.2
 --- !u!114 &1571917512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1571917508}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 521d6d3bd55e1b3469f6fdd610cf94b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaveSpawner
+  enemyPrefab: {fileID: 5448052128714685552, guid: 7fd8b42f827c17e4b86ad0371395d951, type: 3}
+  amountToSpawn: 2
+  spawnRadius: 15
+  timeBetweenSpawns: 0.2
+--- !u!114 &1571917513
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1449,7 +1422,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 521d6d3bd55e1b3469f6fdd610cf94b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaveSpawner
-  enemyPrefab: {fileID: 5448052128714685552, guid: 7fd8b42f827c17e4b86ad0371395d951, type: 3}
+  enemyPrefab: {fileID: 5448052128714685552, guid: 785a16dfa13e2da45ad5a6602fa0b96a, type: 3}
   amountToSpawn: 2
   spawnRadius: 15
   timeBetweenSpawns: 0.2
@@ -1892,5 +1865,4 @@ SceneRoots:
   - {fileID: 519378258}
   - {fileID: 1772550112}
   - {fileID: 1185426751}
-  - {fileID: 1118186045}
   - {fileID: 1571917510}

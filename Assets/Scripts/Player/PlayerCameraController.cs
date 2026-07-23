@@ -10,7 +10,8 @@ public class PlayerCameraController : MonoBehaviour
     [SerializeField] private float maxDistance = 15f;
 
     private PlayerInput playerInput;
-    private CinemachineOrbitalFollow orbital;
+    private CinemachineFollow cinemachineFollow;
+    private Vector3 normalizedOffset;
 
     private float targetZoom;
     private float currentZoom;
@@ -22,22 +23,36 @@ public class PlayerCameraController : MonoBehaviour
         // Only resolve local Cinemachine components here.
         // PlayerInput is injected later via Initialize().
         CinemachineCamera cam = GetComponent<CinemachineCamera>();
-        orbital = cam.GetComponent<CinemachineOrbitalFollow>();
+        cinemachineFollow = cam.GetComponent<CinemachineFollow>();
 
-        targetZoom = currentZoom = orbital.Radius;
+        if (cinemachineFollow != null)
+        {
+            // save normalized offset dir
+            normalizedOffset = cinemachineFollow.FollowOffset.normalized;
+            // Start Zoom based on var in inspector
+            targetZoom = currentZoom = cinemachineFollow.FollowOffset.magnitude;
+        }
+
+        else
+        {
+            Debug.LogWarning("[PlayerCameraController] CinemachineFollow component missing!");
+        }
     }
     private void Update()
     {
         // Guard: do nothing until Initialize() has been called.
-        if (playerInput == null) return;
+        if (playerInput == null || cinemachineFollow == null) return;
 
         float zoomInput = playerInput.ZoomInput;
 
         if (zoomInput != 0f)
-            targetZoom = Mathf.Clamp(orbital.Radius - zoomInput * zoomSpeed, minDistance, maxDistance);
+        {
+            targetZoom = Mathf.Clamp(targetZoom - zoomInput * zoomSpeed, minDistance, maxDistance);
+        }
 
         currentZoom = Mathf.Lerp(currentZoom, targetZoom, Time.deltaTime * zoomLerpSpeed);
-        orbital.Radius = currentZoom;
+
+        cinemachineFollow.FollowOffset = normalizedOffset * currentZoom;
     }
 
     // Called by SceneBootstrapper once the avatar has been instantiated.

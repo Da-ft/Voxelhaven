@@ -6,6 +6,7 @@ public class EnemyMeleeProfile : EnemyProfileSO
     public override void ExecuteAttack(EnemyBrain enemy)
     {
         // enemy.PlayerTarget.GetComponent<PlayerHealth>().TakeDamage(attackDamage);
+        Player.Instance.TakeDamage(damage);
 
         Debug.Log($"{enemy.gameObject.name} macht {damage} Nahkampf-Schaden!");
 

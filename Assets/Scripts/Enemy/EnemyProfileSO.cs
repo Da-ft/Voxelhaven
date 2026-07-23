@@ -20,10 +20,29 @@ public abstract class EnemyProfileSO : ScriptableObject
     [Tooltip("This should be a decimal Value: 1.25 = 1.25 Attacks per Second.")]
     public float attackSpeed;
 
-    [Tooltip("Defines the value of dropped XP, scales with 'level' modifier.")]
-    public float xpToDrop;
-    [Tooltip("Defines the starting power of the 'level' modifier.")]
-    public int startingLevel;
+    [Header("Loot und FX.")]
+    [Tooltip("Defines the item to be dropped.")]
+    public GameObject dropPrefab;
+    [Tooltip("Insert death VFX.")]
+    public GameObject deathVfxPrefab;
 
     public abstract void ExecuteAttack(EnemyBrain enemy);
+
+    public virtual void ExecuteDeath(EnemyBrain enemy)
+    {
+        if (dropPrefab != null)
+        {
+            Vector3 spawnPos = enemy.transform.position + Vector3.up * 0.5f;
+            Instantiate(dropPrefab, spawnPos, Quaternion.identity);
+            // TODO: Pooling
+        }
+
+        if (deathVfxPrefab != null)
+        {
+            Instantiate(deathVfxPrefab, enemy.transform.position, Quaternion.identity);
+            // TODO: Pooling
+        }
+        // TODO: Pooling
+        Destroy(enemy.gameObject);  
+    }
 }

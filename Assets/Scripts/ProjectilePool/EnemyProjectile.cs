@@ -30,7 +30,8 @@ public class EnemyProjectile : MonoBehaviour
         // WICHTIG: Dein Spieler braucht den Tag "Player" und einen Collider
         if (other.CompareTag("Player"))
         {
-            // TODO: Player.Instance.TakeDamage(damage); aufrufen
+            Player.Instance.TakeDamage(damage);
+
             Debug.Log($"Projektil trifft Spieler für {damage} Schaden!");
             Destroy(gameObject); // Projektil beim Treffer zerstören
         }

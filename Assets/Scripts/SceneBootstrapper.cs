@@ -62,6 +62,5 @@ public class SceneBootstrapper : MonoBehaviour
 
         // Set Cinemachine follow and look-at targets to the avatar.
         cinemachineCamera.Follow = avatar.transform;
-        cinemachineCamera.LookAt = avatar.transform;
     }
 }

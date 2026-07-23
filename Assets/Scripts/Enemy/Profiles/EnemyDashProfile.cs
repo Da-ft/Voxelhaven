@@ -41,8 +41,9 @@ public class EnemyDashProfile : EnemyProfileSO
                 float sqrDistanceToPlayer = (enemy.PlayerTarget.position - enemy.transform.position).sqrMagnitude;
 
                 if (sqrDistanceToPlayer < 1.5f * 1.5f)
-                    // TODO: Player.Instance.TakeDamage(damage);
-                    Debug.Log($"Dash hat den Spieler getroffen!");
+                    Player.Instance.TakeDamage(damage);
+
+                Debug.Log($"Dash hat den Spieler getroffen!");
                 hasDealtDamage = true;
             }
             timer += Time.deltaTime;

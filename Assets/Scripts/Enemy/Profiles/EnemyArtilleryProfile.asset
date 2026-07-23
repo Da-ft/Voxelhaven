@@ -17,7 +17,7 @@ MonoBehaviour:
   healthRegen: 0
   moveSpeed: 2
   damage: 1
-  attackRange: 10
+  attackRange: 15
   attackSpeed: 1
   xpToDrop: 0
   startingLevel: 0

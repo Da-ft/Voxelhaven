@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
@@ -10,9 +11,6 @@ public class Player : MonoBehaviour
     [SerializeField] private float maxHealth = 100f;
     [SerializeField] private float healthRegen = 0f;
 
-    [Header("Progression")]
-    [SerializeField] private float xpPerLevel = 100f;
-
     [Header("Global Modifier")]
     [SerializeField] private float globalDamage = 1f;
     [SerializeField] private float globalAttackSpeed = 1f;
@@ -22,10 +20,7 @@ public class Player : MonoBehaviour
     #endregion
 
     // Runtime State
-
     private float currentHealth;
-    private float currentXp;
-    private int currentLevel;
     private PlayerController playerController;
 
     // Read-only Properties
@@ -33,8 +28,6 @@ public class Player : MonoBehaviour
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
     public bool IsDead => currentHealth <= 0f;
-    public float CurrentXp => currentXp;
-    public int CurrentLevel => currentLevel;
     public float GlobalDamage => globalDamage;
     public float GlobalAttackSpeed => globalAttackSpeed;
     public float GlobalCritRate => globalCritRate;
@@ -53,8 +46,7 @@ public class Player : MonoBehaviour
     // Events - consumers (UI, Audio, VFX) Subscribe here; Player never touches them directly
 
     public event Action<float, float> OnHealthChanged; // (currentHealth, MaxHealth)
-    public event Action<float> OnXpGained; // (amount gained this call)
-    public event Action<int> OnLevelUp; // (new level)
+    public event Action OnPlayerDied;
 
     // Lifecycle
 
@@ -70,13 +62,11 @@ public class Player : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         currentHealth = maxHealth;
-        currentXp = 0f; // TODO: Tweak XP stuff
-        currentLevel = 1;
     }
 
     private void Update()
     {
-        if (healthRegen > 0f && !IsDead)
+        if (healthRegen > 0f && !IsDead && currentHealth < maxHealth)
             Heal(healthRegen * Time.deltaTime);
     }
 
@@ -89,30 +79,43 @@ public class Player : MonoBehaviour
         playerController = controller;
     }
 
-    public void TakeDamage()
+    // Health and Damage Logic
+    public void TakeDamage(float amount)
     {
-       //TODO: Insert Damage Logic
+        if (IsDead || amount <= 0f) return;
+
+        currentHealth = Mathf.Clamp(currentHealth - amount, 0f, maxHealth);
+
+        // Fire event, ui gets event
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
+        if(IsDead)
+        {
+            OnPlayerDied?.Invoke();
+            Debug.Log("Player died!");
+        }
     }
 
     public void Heal(float amount)
     {
-        if (IsDead) return;
+        if (IsDead || amount <= 0f) return;
+
         currentHealth = Mathf.Clamp(currentHealth + amount, 0f, maxHealth);
+        // Fire event, ui gets event
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
-    public void AddXp(float amount)
+    // Erhöht maximale Health, bool für heal der dazugewonnenen maxHP
+    public void AddMaxHealth(float amount, bool healAmount = true)
     {
         if (amount <= 0f) return;
+        maxHealth += amount;
 
-        currentXp += amount;
-        OnXpGained?.Invoke(amount);
-
-        while (currentXp >= xpPerLevel)
+        if (healAmount)
         {
-            currentXp -= xpPerLevel;
-            currentLevel++;
-            OnLevelUp?.Invoke(currentLevel);
+            currentHealth += amount;
         }
+
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 }

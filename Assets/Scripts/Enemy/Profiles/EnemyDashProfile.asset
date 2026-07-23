@@ -15,12 +15,12 @@ MonoBehaviour:
   enemyName: 
   maxHealth: 100
   healthRegen: 0
-  moveSpeed: 6
+  moveSpeed: 10
   damage: 5
   attackRange: 8
   attackSpeed: 1
-  xpToDrop: 0
-  startingLevel: 0
-  chargeTime: 0.5
-  dashSpeed: 20
-  dashDuration: 0.5
+  dropPrefab: {fileID: 0}
+  deathVfxPrefab: {fileID: 0}
+  chargeTime: 1
+  dashSpeed: 15
+  dashDuration: 1

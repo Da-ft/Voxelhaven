@@ -3,53 +3,69 @@ using UnityEngine;
 
 public class WaveSpawner : MonoBehaviour
 {
-    [Header("References")]
-    public GameObject enemyPrefab;
+    [Header("Wave Settings")]
+    public GameObject[] nightEnemies;
+    public GameObject[] dayEnemies;
 
-    [Header("Test Wave Settings")]
-    public int amountToSpawn = 20;
-    public float spawnRadius = 15f; // Wie weit vom Spawner entfernt?
-    public float timeBetweenSpawns = 0.2f; // Kurze Pause zwischen jedem Spawn
+    private Coroutine currentWaveCoroutine;
 
-    private void Start()
+    private void OnEnable()
     {
-        // Startet den Test-Spawn direkt beim Spielstart
-        StartCoroutine(SpawnTestWave());
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnPhaseChanged += HandlePhaseChanged;
+        }
     }
 
-    private IEnumerator SpawnTestWave()
+    private void OnDisable()
     {
-        while (Player.Instance == null || Player.Instance.AvatarTransform == null)
+        if (GameManager.Instance != null)
         {
-            yield return null;
+            GameManager.Instance.OnPhaseChanged -= HandlePhaseChanged;
+        }
+    }
+
+    private void HandlePhaseChanged(GameManager.GamePhase newPhase)
+    {
+        // alte welle stoppen wenn noch eine läuft
+        if (currentWaveCoroutine != null)
+        {
+            StopCoroutine(currentWaveCoroutine);
+            currentWaveCoroutine = null;
         }
 
-        Debug.Log($"Starte Test-Welle: {amountToSpawn} Gegner werden gespawnt.");
+        switch (newPhase)
+        {
+            case GameManager.GamePhase.Night:
+                currentWaveCoroutine = StartCoroutine(SpawnWave(nightEnemies, 20));
+                break;
+            case GameManager.GamePhase.Day:
+                currentWaveCoroutine = StartCoroutine(SpawnWave(dayEnemies, 20));
+                break;
+            case GameManager.GamePhase.Rest:
+                // Nichts Spawnen! Shop/UI öffnen!
+                break;
+        }
+    }
 
+    private IEnumerator SpawnWave(GameObject[] enemyPool, int amountToSpawn)
+    {
         for (int i = 0; i < amountToSpawn; i++)
         {
-            // 1. Zufällige Position auf einem Kreis um den Spawner berechnen
-            // (insideUnitCircle.normalized sorgt dafür, dass sie wirklich am Rand des Radius spawnen)
-            Vector2 randomPoint = Random.insideUnitCircle.normalized * spawnRadius;
-            Vector3 spawnPosition = new Vector3(randomPoint.x, transform.position.y, randomPoint.y) + transform.position;
+            // Einen zufälligen Gegner aus dem passenden Pool wählen
+            GameObject randomEnemy = enemyPool[Random.Range(0, enemyPool.Length)];
 
-            // 2. Den eigentlichen Spawn-Befehl ausführen
-            SpawnEnemy(spawnPosition);
+            // TODO: Spawnpunkt berechnen
+            Vector3 spawnPos = transform.position; // Platzhalter
 
-            // 3. Kurz warten, bevor der nächste Gegner spawnt (verhindert Lag-Spikes)
-            yield return new WaitForSeconds(timeBetweenSpawns);
+            // Gegner spawnen
+            Instantiate(randomEnemy, spawnPos, Quaternion.identity);
+
+            // Kurz warten bis zum nächsten Gegner
+            yield return new WaitForSeconds(1.5f);
         }
-    }
 
-    public void SpawnEnemy(Vector3 spawnPosition)
-    {
-        // Gegner instanziieren
-        GameObject newEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-
-        // Das Gehirn holen und das Ziel direkt übergeben (Dependency Injection)
-        if (newEnemy.TryGetComponent(out EnemyBrain brain))
-        {
-            brain.Initialize();
-        }
+        // Wenn alle gespawnt und tot sind -> Phase wechseln!
+        // (Das machst du idealerweise in einem separaten Check, wenn alle Gegner besiegt wurden)
     }
 }

@@ -17,25 +17,23 @@ public class PeashooterProjectile : MonoBehaviour
         // Impuls genau nach vorne (lokale Z-Achse) geben
         rb.linearVelocity = transform.forward * speed;
 
-        // Projektil automatisch zerst�ren, wenn es seine maximale Reichweite erreicht hat
+        // Projektil automatisch zerstören, wenn es seine maximale Reichweite erreicht hat
         Destroy(gameObject, lifetime);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // Ignoriere den Spieler selbst oder andere Trigger (wie z. B. Gegner-Aggro-Radien)
+        // Ignoriere den Spieler selbst oder andere Trigger
         if (other.CompareTag("Player") || other.isTrigger) return;
 
-        // Pr�fen, ob wir einen Gegner getroffen haben
+        // Prüfen, ob wir einen Gegner getroffen haben
         if (other.CompareTag("Enemy"))
         {
-            // TODO: Ersetze das hier durch deine echte Gegner-Schadenslogik!
-            // z. B.: if (other.TryGetComponent(out EnemyBrain enemy)) enemy.TakeDamage(damage);
             if (other.TryGetComponent(out EnemyBrain enemy)) enemy.TakeDamage(damage);
             Debug.Log($"Peashooter hat Gegner getroffen f�r {damage} Schaden!");
         }
 
-        // Egal ob Wand oder Gegner: Das Projektil wird beim Aufprall zerst�rt
+        // Egal ob Wand oder Gegner: Das Projektil wird beim Aufprall zerstört
         Destroy(gameObject);
     }
 }

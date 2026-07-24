@@ -15,5 +15,5 @@ MonoBehaviour:
   damage: 10
   attackCooldown: 0.5
   range: 10
-  projectilePrefab: {fileID: 5782689713099341137, guid: a62c799f915b4924e82a8325f7a947f9, type: 3}
+  projectilePrefab: {fileID: 5782689713099341137, guid: 9b024c7bc1c2c5b408d323ae30210712, type: 3}
   projectileSpeed: 20

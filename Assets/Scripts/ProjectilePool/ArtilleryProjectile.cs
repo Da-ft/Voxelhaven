@@ -34,7 +34,8 @@ public class ArtilleryProjectile : MonoBehaviour
         {
             if (hit.CompareTag("Player"))
             {
-                // TODO: Player.Instance.TakeDamage() aufrufen
+                Player.Instance.TakeDamage(damage);
+
                 Debug.Log($"Artillery Damaged Player!");
             }
         }

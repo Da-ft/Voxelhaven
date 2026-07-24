@@ -65,7 +65,7 @@ public class EnemyBrain : MonoBehaviour
     private void Die()
     {
         // TODO: Death Logic, Pooling, Dropping XP etc.
-        Destroy(gameObject);
+        enemyProfile.ExecuteDeath(this);
     }
 
     public void Initialize()

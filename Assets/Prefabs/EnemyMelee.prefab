@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2303115410870643661}
   - component: {fileID: 7178479595182350122}
   - component: {fileID: 4006540628359688196}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EnemyModell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 4797198325018347891}
   - component: {fileID: 3832571540401681657}
   - component: {fileID: 996815284181338363}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EnemyMelee
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -224,7 +224,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 922003604942491463}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EnemyModell
   m_TagString: Untagged
   m_Icon: {fileID: 0}

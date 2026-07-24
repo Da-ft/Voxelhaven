@@ -57,9 +57,7 @@ public class SceneBootstrapper : MonoBehaviour
         // Verbindet das persistente Player-Singleton mit dem Avatar dieser Szene
         if (Player.Instance != null)
             Player.Instance.BindAvatar(avatar.transform, playerController);
-        else
-            Debug.LogWarning("[SceneBootstrapper] Player.Instance is null - Enemies können den Avatar nicht anvisieren, Knockback wird nicht funktionieren.");
-
+        
         // Set Cinemachine follow and look-at targets to the avatar.
         cinemachineCamera.Follow = avatar.transform;
         cinemachineCamera.LookAt = avatar.transform;

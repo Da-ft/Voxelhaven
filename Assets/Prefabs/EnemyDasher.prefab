@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4240261487534813240}
   - component: {fileID: 5502401266195745030}
   - component: {fileID: 728125748463139337}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EnemyModell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 2872788832151704682}
   - component: {fileID: -2061934507917350259}
   - component: {fileID: -99168578377668932}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EnemyDasher
   m_TagString: Enemy
   m_Icon: {fileID: 0}

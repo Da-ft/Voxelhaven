@@ -23,17 +23,20 @@ public class EnemyBrain : MonoBehaviour
 
     private void Start()
     {
-        // Load Scriptable Object
-        currentHealth = enemyProfile.maxHealth;
-
-        if (agent != null)
+        // Load Scriptable Object Stats
+        if (enemyProfile != null)
         {
-            agent.speed = enemyProfile.moveSpeed;
-            agent.stoppingDistance = enemyProfile.attackRange; // stopp agent at defined range for attack
+            currentHealth = enemyProfile.maxHealth;
         }
 
-        // Load FSM
-        //ChangeState(ChaseState);
+        if (agent != null && enemyProfile != null)
+        {
+            agent.speed = enemyProfile.moveSpeed;
+            agent.stoppingDistance = enemyProfile.attackRange; // Stoppt den Agenten auf Angriffsdistanz
+        }
+
+        // Automatische Initialisierung beim Spawnen!
+        Initialize();
     }
 
     private void Update()

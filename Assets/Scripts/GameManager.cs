@@ -8,8 +8,17 @@ public class GameManager : MonoBehaviour
 
     public enum GamePhase { Night, Day, Rest }
 
-    [Header("Current Phase")]
-    public GamePhase CurrentPhase;
+    [Header("Phase Settings")]
+    public GamePhase CurrentPhase { get; private set; }
+
+    [Tooltip("Length of Day/Nightcycle in seconds.")]
+    [SerializeField] private float phaseDuration = 60f;
+
+    // TODO: Link with UI
+    public float TimeRemaining { get; private set; }
+
+    [Header("Difficulty")]
+    public int CycleCounter { get; private set; } = 1;
 
     [Header("Resources")]
     private int scrapAmount;
@@ -39,28 +48,78 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // Loop starts at Night!
-        ChangePhase(GamePhase.Night);
+        StartPhase(GamePhase.Night);
     }
 
-    public void ChangePhase(GamePhase newPhase)
+    private void Update()
+    {
+        if (CurrentPhase == GamePhase.Night || CurrentPhase == GamePhase.Day)
+        {
+            TimeRemaining -= Time.deltaTime;
+            if (TimeRemaining <= 0f)
+            {
+                EndCurrentPhase();
+            }
+        }
+    }
+
+    private void StartPhase(GamePhase newPhase)
     {
         CurrentPhase = newPhase;
-        Debug.Log($"[GameManager] Phase gewechselt zu: {newPhase}");
 
-        if (newPhase == GamePhase.Day)
+        if (CurrentPhase == GamePhase.Night || CurrentPhase == GamePhase.Day)
         {
-            // TODO: Scrap Pile instantiate! Feed with "scrapAmount"
-            Debug.Log($"Scrap Pile with {scrapAmount} was created!");
+            TimeRemaining = phaseDuration;
         }
 
-        // Inform Abos
+        Debug.Log($"[GameManager] Start Phase: {CurrentPhase} (Cycle: {CycleCounter}");
         OnPhaseChanged?.Invoke(CurrentPhase);
     }
 
-    // TODO: Clean later! Testing Buttons!
-    public void StartDayPhase() => ChangePhase(GamePhase.Day);
-    public void StartRestPhase() => ChangePhase(GamePhase.Rest);
-    public void StartNightPhase() => ChangePhase(GamePhase.Night);
+    private void EndCurrentPhase()
+    {
+        CleanupActiveEnemies();
+
+        switch (CurrentPhase)
+        {
+            case GamePhase.Night:
+                StartPhase(GamePhase.Day);
+                break;
+            case GamePhase.Day:
+                StartPhase(GamePhase.Rest);
+                break;
+            case GamePhase.Rest:
+                CycleCounter++;
+                StartPhase(GamePhase.Night);
+                break;
+        }
+    }
+
+    // TODO: Link with UI Button to end Rest Phase!
+    public void LeaveRestPhase()
+    {
+        if (CurrentPhase == GamePhase.Rest)
+        {
+            EndCurrentPhase();
+        }
+    }
+
+    private void CleanupActiveEnemies()
+    {
+        // Enemies must have "Enemy" Tag
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach (GameObject enemy in enemies)
+        {
+            // TODO: Despawn VFX?
+            Destroy(enemy);
+        }
+
+        if (enemies.Length > 0)
+        {
+            Debug.Log($"[GameManager] {enemies.Length} verbleibende Gegner wurden despawned!");
+        }
+    }
 
     // Resource Logic Stuff
     public void AddScrap(int amount)

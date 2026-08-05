@@ -32,17 +32,23 @@ public abstract class EnemyProfileSO : ScriptableObject
     {
         if (dropPrefab != null)
         {
-            Vector3 spawnPos = enemy.transform.position + Vector3.up * 0.5f;
-            Instantiate(dropPrefab, spawnPos, Quaternion.identity);
-            // TODO: Pooling
+            //Vector3 spawnPos = enemy.transform.position + Vector3.up * 0.5f;#
+            Vector3 spawnPos = enemy.transform.position.magnitude, ;
+
+            if (Physics.Raycast(enemy.transform.position + Vector3.up * 1f, Vector3.down, out RaycastHit hit, 2f))
+            {
+                // Wenn der Boden getroffen wird, spawnen wir exakt 0.2 Einheiten über dem Boden
+                spawnPos = hit.point + Vector3.up * 0.2f;
+            }
+
+            ObjectPoolManager.SpawnObject(dropPrefab, spawnPos, Quaternion.identity, ObjectPoolManager.PoolType.Collectibles);
         }
 
         if (deathVfxPrefab != null)
         {
-            Instantiate(deathVfxPrefab, enemy.transform.position, Quaternion.identity);
-            // TODO: Pooling
+            ObjectPoolManager.SpawnObject(deathVfxPrefab, enemy.transform.position, Quaternion.identity, ObjectPoolManager.PoolType.ParticleSystems);
         }
-        // TODO: Pooling
-        Destroy(enemy.gameObject);  
+
+        ObjectPoolManager.ReturnObjectToPool(enemy.gameObject, ObjectPoolManager.PoolType.GameObjects);
     }
 }

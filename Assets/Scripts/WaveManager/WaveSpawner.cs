@@ -114,7 +114,7 @@ public class WaveManager : MonoBehaviour
                 }
 
                 // 3. Gegner an der berechneten Position spawnen
-                GameObject spawnedEnemy = Instantiate(enemyPrefab, spawnPos, randomSp.rotation);
+                GameObject spawnedEnemy = ObjectPoolManager.SpawnObject(enemyPrefab, spawnPos, randomSp.rotation, ObjectPoolManager.PoolType.GameObjects);
 
                 if (spawnedEnemy.TryGetComponent(out EnemyBrain brain))
                 {

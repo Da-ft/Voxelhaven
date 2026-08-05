@@ -73,6 +73,7 @@ public class EnemyBrain : MonoBehaviour
 
     public void Initialize()
     {
+        currentHealth = enemyProfile.maxHealth;
         if (Player.Instance != null && Player.Instance.AvatarTransform != null)
         {
             PlayerTarget = Player.Instance.AvatarTransform;
@@ -80,7 +81,7 @@ public class EnemyBrain : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Enemy konnte Avatar nicht finden! Ist Scenebootstrapper durchgelaufen?");
+            Debug.LogError("Enemy konnte Avatar nicht finden!");
         }
     }
 }

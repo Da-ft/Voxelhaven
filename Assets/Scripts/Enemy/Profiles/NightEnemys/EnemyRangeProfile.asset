@@ -19,7 +19,7 @@ MonoBehaviour:
   damage: 5
   attackRange: 10
   attackSpeed: 1.5
-  xpToDrop: 5
-  startingLevel: 0
+  dropPrefab: {fileID: 7189525440805237327, guid: 3f307fb274222e145a659c36246b7ab7, type: 3}
+  deathVfxPrefab: {fileID: 0}
   projectilePrefab: {fileID: 5782689713099341137, guid: a62c799f915b4924e82a8325f7a947f9, type: 3}
   projectileSpeed: 15

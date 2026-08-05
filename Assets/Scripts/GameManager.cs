@@ -106,18 +106,17 @@ public class GameManager : MonoBehaviour
 
     private void CleanupActiveEnemies()
     {
-        // Enemies must have "Enemy" Tag
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
 
         foreach (GameObject enemy in enemies)
         {
-            // TODO: Despawn VFX?
-            Destroy(enemy);
+            // Ab in den Pool statt Destroy
+            ObjectPoolManager.ReturnObjectToPool(enemy, ObjectPoolManager.PoolType.GameObjects);
         }
 
         if (enemies.Length > 0)
         {
-            Debug.Log($"[GameManager] {enemies.Length} verbleibende Gegner wurden despawned!");
+            Debug.Log($"[GameManager] {enemies.Length} verbleibende Gegner in den Pool geschickt!");
         }
     }
 

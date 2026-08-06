@@ -32,14 +32,9 @@ public abstract class EnemyProfileSO : ScriptableObject
     {
         if (dropPrefab != null)
         {
-            //Vector3 spawnPos = enemy.transform.position + Vector3.up * 0.5f;#
-            Vector3 spawnPos = enemy.transform.position.magnitude, ;
-
-            if (Physics.Raycast(enemy.transform.position + Vector3.up * 1f, Vector3.down, out RaycastHit hit, 2f))
-            {
-                // Wenn der Boden getroffen wird, spawnen wir exakt 0.2 Einheiten über dem Boden
-                spawnPos = hit.point + Vector3.up * 0.2f;
-            }
+            // Wir nehmen X und Z vom Gegner, aber setzen Y fest auf einen Wert (z. B. 0.5f oder 1.0f)
+            // TODO: MAGIC NUMBER AHHHHHHHH!
+            Vector3 spawnPos = new Vector3(enemy.transform.position.x, 0.5f, enemy.transform.position.z);
 
             ObjectPoolManager.SpawnObject(dropPrefab, spawnPos, Quaternion.identity, ObjectPoolManager.PoolType.Collectibles);
         }

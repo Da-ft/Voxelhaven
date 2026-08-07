@@ -14,10 +14,15 @@ public class EnemyBrain : MonoBehaviour
     public float currentAttackCooldown;
     public bool IsActionLocked = false;
 
+    [Header("Thief Variables")]
+    public Transform CurrentTarget { get; set; }
+    public int CarriedScrap { get; set; } = 0;
+    public Transform HomeZone { get; set; }
+
     // FSM
     private IEnemyState currentState;
 
-    // Vordefinierte States, verhindert ständige "new" instanziierung
+    // Predefined States
     public EnemyChaseState ChaseState { get; private set; } = new EnemyChaseState();
     public EnemyAttackState AttackState { get; private set; } = new EnemyAttackState();
 
@@ -32,10 +37,10 @@ public class EnemyBrain : MonoBehaviour
         if (agent != null && enemyProfile != null)
         {
             agent.speed = enemyProfile.moveSpeed;
-            agent.stoppingDistance = enemyProfile.attackRange; // Stoppt den Agenten auf Angriffsdistanz
+            agent.stoppingDistance = enemyProfile.attackRange; // Stopp Agent at attackdistance
         }
 
-        // Automatische Initialisierung beim Spawnen!
+        // Initialize on Start
         Initialize();
     }
 
@@ -74,14 +79,22 @@ public class EnemyBrain : MonoBehaviour
     public void Initialize()
     {
         currentHealth = enemyProfile.maxHealth;
+        CarriedScrap = 0; // Reset for Object Pooling!
+
         if (Player.Instance != null && Player.Instance.AvatarTransform != null)
         {
             PlayerTarget = Player.Instance.AvatarTransform;
-            ChangeState(ChaseState);
-        }
-        else
-        {
-            Debug.LogError("Enemy konnte Avatar nicht finden!");
+
+            if (enemyProfile is not EnemyThiefProfile)
+            {
+                CurrentTarget = PlayerTarget;
+                ChangeState(ChaseState);
+            }
+
+            if (enemyProfile is EnemyThiefProfile)
+            {
+                ChangeState(new ThiefApproachState());
+            }
         }
     }
 }

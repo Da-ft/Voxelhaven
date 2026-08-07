@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e27e0ec523c0fb1429cb05c915deb965, type: 3}
-  m_Name: EnemyArtilleryProfile
+  m_Name: EnemyDayArtillery
   m_EditorClassIdentifier: Assembly-CSharp::EnemyArtilleryProfile
   enemyName: 
   maxHealth: 10
@@ -19,7 +19,7 @@ MonoBehaviour:
   damage: 1
   attackRange: 15
   attackSpeed: 1
-  dropPrefab: {fileID: 7189525440805237327, guid: 3f307fb274222e145a659c36246b7ab7, type: 3}
+  dropPrefab: {fileID: 7189525440805237327, guid: 6aa4e1f0d9467424ba1d0805388031e3, type: 3}
   deathVfxPrefab: {fileID: 0}
   projectileAOE: {fileID: 8325555580930123219, guid: 62702d259ee513c47a7d53893243554a, type: 3}
   flightTime: 1.5

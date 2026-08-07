@@ -9,18 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8657168919b06f47bf7b84e30c5b758, type: 3}
-  m_Name: EnemyDashProfile
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyDashProfile
+  m_Script: {fileID: 11500000, guid: 1d2a2c1dec580594ca8b230a84c50009, type: 3}
+  m_Name: EnemyNightRange
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyRangedProfile
   enemyName: 
-  maxHealth: 100
+  maxHealth: 50
   healthRegen: 0
-  moveSpeed: 10
+  moveSpeed: 4
   damage: 5
-  attackRange: 8
-  attackSpeed: 1
+  attackRange: 10
+  attackSpeed: 1.5
   dropPrefab: {fileID: 7189525440805237327, guid: 3f307fb274222e145a659c36246b7ab7, type: 3}
   deathVfxPrefab: {fileID: 0}
-  chargeTime: 1
-  dashSpeed: 15
-  dashDuration: 1
+  projectilePrefab: {fileID: 5782689713099341137, guid: a62c799f915b4924e82a8325f7a947f9, type: 3}
+  projectileSpeed: 15

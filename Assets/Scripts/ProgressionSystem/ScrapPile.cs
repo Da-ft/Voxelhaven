@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Scrappile : MonoBehaviour
+public class ScrapPile : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private ScrapStage[] scrapStages;
@@ -47,6 +47,21 @@ public class Scrappile : MonoBehaviour
         if (spriteRenderer.sprite != targetSprite)
         {
             spriteRenderer.sprite = targetSprite;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent(out EnemyBrain enemy))
+        {
+            if (enemy.enemyProfile is EnemyThiefProfile)
+            {
+
+                if (enemy.CarriedScrap == 0)
+                {
+                    enemy.ChangeState(new ThiefStealState());
+                }
+            }
         }
     }
 }

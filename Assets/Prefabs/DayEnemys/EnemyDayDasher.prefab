@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: -2061934507917350259}
   - component: {fileID: -99168578377668932}
   m_Layer: 6
-  m_Name: EnemyDasher
+  m_Name: EnemyDayDasher
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -138,7 +138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 634752ca82db7bf4085980745fbefbaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBrain
-  enemyProfile: {fileID: 11400000, guid: f487caddcfe9e7c4f810baafb3baa0fa, type: 2}
+  enemyProfile: {fileID: 11400000, guid: 8002e0eb9b6351846ae7193413d221d6, type: 2}
   agent: {fileID: 2872788832151704682}
   currentHealth: 0
   currentAttackCooldown: 0
@@ -211,7 +211,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0

@@ -132,4 +132,18 @@ public class GameManager : MonoBehaviour
         manaAmount += amount;
         OnManaChanged?.Invoke(manaAmount);
     }
+
+    // Called when Scrap gets stolen
+    public int StealScrap(int requestedAmount)
+    {
+        int amountToSteal = Mathf.Min(scrapAmount, requestedAmount);
+
+        if (amountToSteal > 0)
+        {
+            scrapAmount -= amountToSteal;
+            OnScrapChanged?.Invoke(scrapAmount);
+        }
+
+        return amountToSteal;
+    }
 }

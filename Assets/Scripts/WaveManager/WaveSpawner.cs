@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class WaveManager : MonoBehaviour
 {
+    // Singleton-Instanz für einfachen Zugriff von außen (z.B. durch die Diebe)
+    public static WaveManager Instance { get; private set; }
+
     [Header("Spawn Pools")]
     public EnemySpawnConfig[] nightEnemies;
     public EnemySpawnConfig[] dayEnemies;
 
     [Header("Spawn Points")]
-    [Tooltip("Zufällige Punkte, an denen Gegner spawnen können")]
+    [Tooltip("Zufällige Punkte, an denen normale Gegner spawnen können")]
     public Transform[] spawnPoints;
 
     [Header("Pacing Settings")]
@@ -21,8 +24,15 @@ public class WaveManager : MonoBehaviour
     public float subWaveTimeout = 20f;
 
     private Coroutine currentWaveRoutine;
-
     private bool isSubscribed = false;
+
+    // Speichert das von Dieben gestohlene Budget für die nächste Welle
+    private int bonusBudget = 0;
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+    }
 
     private void OnEnable()
     {
@@ -41,6 +51,15 @@ public class WaveManager : MonoBehaviour
             GameManager.Instance.OnPhaseChanged -= HandlePhaseChanged;
             isSubscribed = false;
         }
+    }
+
+    /// <summary>
+    /// Wird von entkommenen Dieben aufgerufen, um das Welle-Budget zu erhöhen.
+    /// </summary>
+    public void AddBonusBudget(int amount)
+    {
+        bonusBudget += amount;
+        Debug.Log($"[WaveManager] Bonus-Budget um {amount} erhöht! Aktuelles Bonus-Budget für nächste Welle: {bonusBudget}");
     }
 
     private void TrySubscribe()
@@ -79,14 +98,17 @@ public class WaveManager : MonoBehaviour
 
     private IEnumerator SpawnWaveRoutine(EnemySpawnConfig[] pool)
     {
-        // 1. Budget für die gesamte Phase berechnen (skaliert mit dem Cycle)
-        int totalBudget = baseBudget * GameManager.Instance.CycleCounter;
+        // Budget für die gesamte Phase berechnen (Basis-Budget * Cycle + gestohlenes Bonus-Budget)
+        int totalBudget = (baseBudget * GameManager.Instance.CycleCounter) + bonusBudget;
 
-        // 2. Budget pro Sub-Wave berechnen
+        // Bonus-Budget zurücksetzen, da es für diese Welle aufgebraucht wurde
+        bonusBudget = 0;
+
+        // Budget pro Sub-Wave berechnen
         int budgetPerSubWave = totalBudget / Mathf.Max(1, subWavesPerPhase);
         int remainingTotalBudget = totalBudget;
 
-        // 3. Sub-Waves abarbeiten
+        // Sub-Waves abarbeiten
         while (remainingTotalBudget > 0)
         {
             int currentSubWaveBudget = Mathf.Min(budgetPerSubWave, remainingTotalBudget);
@@ -100,32 +122,64 @@ public class WaveManager : MonoBehaviour
             // Squad physisch spawnen
             foreach (GameObject enemyPrefab in squadToSpawn)
             {
-                Transform randomSp = spawnPoints[Random.Range(0, spawnPoints.Length)];
+                Transform selectedSpawnPoint = null;
+                ScrapDropZone chosenDropZone = null;
 
-                // 1. Zufälligen Offset im 2-Meter-Radius um den Spawnpunkt berechnen
+                // Prüfen, ob der Gegner ein Dieb ist
+                bool isThief = false;
+                if (enemyPrefab.TryGetComponent(out EnemyBrain prefabBrain))
+                {
+                    if (prefabBrain.enemyProfile is EnemyThiefProfile)
+                    {
+                        isThief = true;
+                    }
+                }
+
+                // SPREAD-LOGIK FOR DIEBE VS. NORMALE GEGNER
+                if (isThief && ScrapDropZone.AllZones.Count > 0)
+                {
+                    // Diebe spawnen an einer zufälligen Diebes-Zone (ScrapDropZone)
+                    chosenDropZone = ScrapDropZone.AllZones[Random.Range(0, ScrapDropZone.AllZones.Count)];
+                    selectedSpawnPoint = chosenDropZone.transform;
+                }
+                else if (spawnPoints.Length > 0)
+                {
+                    // Normale Gegner spawnen an den normalen SpawnPoints
+                    selectedSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+                }
+
+                if (selectedSpawnPoint == null) continue;
+
+                // Zufälligen Offset im 2-Meter-Radius um den Spawnpunkt berechnen
                 Vector3 randomOffset = Random.insideUnitSphere * 2f;
-                randomOffset.y = 0f; // Offset nur auf der XZ-Ebene (Boden)!
-                Vector3 spawnPos = randomSp.position + randomOffset;
+                randomOffset.y = 0f;
+                Vector3 spawnPos = selectedSpawnPoint.position + randomOffset;
 
-                // 2. Sicherstellen, dass die Position auch WIRKLICH auf dem NavMesh liegt
+                // Sicherstellen, dass die Position auch WIRKLICH auf dem NavMesh liegt
                 if (UnityEngine.AI.NavMesh.SamplePosition(spawnPos, out UnityEngine.AI.NavMeshHit hit, 3f, UnityEngine.AI.NavMesh.AllAreas))
                 {
                     spawnPos = hit.position;
                 }
 
-                // 3. Gegner an der berechneten Position spawnen
-                GameObject spawnedEnemy = ObjectPoolManager.SpawnObject(enemyPrefab, spawnPos, randomSp.rotation, ObjectPoolManager.PoolType.GameObjects);
+                // Gegner an der berechneten Position spawnen
+                GameObject spawnedEnemy = ObjectPoolManager.SpawnObject(enemyPrefab, spawnPos, selectedSpawnPoint.rotation, ObjectPoolManager.PoolType.GameObjects);
 
                 if (spawnedEnemy.TryGetComponent(out EnemyBrain brain))
                 {
+                    // Falls es ein Dieb ist, weisen wir ihm seine Heimatadresse zu
+                    if (isThief && chosenDropZone != null)
+                    {
+                        brain.HomeZone = chosenDropZone.transform;
+                    }
+
                     brain.Initialize();
                 }
 
-                // 4. WINZIGE PAUSE (0.08s): Verhindert das Ineinander-Stapeln der Agenten!
+                // WINZIGE PAUSE (0.08s): Verhindert das Ineinander-Stapeln der Agenten!
                 yield return new WaitForSeconds(0.08f);
             }
 
-            // 4. CLEAR OR TIMEOUT - Warten bis Gegner tot sind oder der Timer abläuft
+            // CLEAR OR TIMEOUT - Warten bis Gegner tot sind oder der Timer abläuft
             float timer = subWaveTimeout;
             while (timer > 0f && AreEnemiesAlive())
             {
@@ -144,18 +198,15 @@ public class WaveManager : MonoBehaviour
         spent = 0;
         int currentBudget = maxBudget;
 
-        // Aktuellen Zyklus aus dem GameManager holen
         int currentCycle = GameManager.Instance.CycleCounter;
 
         while (currentBudget > 0)
         {
-            // Wir nutzen hier ein Tuple, um den Gegner an sein live berechnetes Gewicht zu binden
             List<(EnemySpawnConfig config, int dynWeight)> validOptions = new List<(EnemySpawnConfig, int)>();
             int totalWeight = 0;
 
             foreach (var enemy in pool)
             {
-                // 1. PROGRESSION CHECK: Ist der Gegner schon freigeschaltet?
                 if (currentCycle < enemy.minCycleToSpawn) continue;
 
                 spawnedCounts.TryGetValue(enemy, out int currentCount);
@@ -163,14 +214,8 @@ public class WaveManager : MonoBehaviour
 
                 if (enemy.cost <= currentBudget && underLimit)
                 {
-                    // 2. DYNAMISCHES GEWICHT BERECHNEN
-                    // Wie viele Zyklen ist dieser Gegner schon aktiv?
                     int cyclesActive = currentCycle - enemy.minCycleToSpawn;
-
-                    // Basis-Gewicht + (Zuwachs * aktive Zyklen)
                     int dynamicWeight = enemy.baseWeight + (enemy.weightIncreasePerCycle * cyclesActive);
-
-                    // Sicherheitshalber: Ein Gewicht darf nie 0 oder negativ sein, falls man negative Zuwächse nutzt
                     dynamicWeight = Mathf.Max(1, dynamicWeight);
 
                     validOptions.Add((enemy, dynamicWeight));
@@ -178,9 +223,8 @@ public class WaveManager : MonoBehaviour
                 }
             }
 
-            if (validOptions.Count == 0) break; // Keine gültigen Gegner mehr für das Restbudget
+            if (validOptions.Count == 0) break;
 
-            // 3. ZUFALL MIT DYNAMISCHER GEWICHTUNG
             int randomValue = Random.Range(0, totalWeight);
             int cumulativeWeight = 0;
             EnemySpawnConfig chosenEnemy = null;
@@ -211,7 +255,6 @@ public class WaveManager : MonoBehaviour
 
     private bool AreEnemiesAlive()
     {
-        // Da der GameManager am Ende der Phase alle Enemy-Tags löscht, ist diese Abfrage extrem verlässlich
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         return enemies.Length > 0;
     }

@@ -20,10 +20,30 @@ public abstract class EnemyProfileSO : ScriptableObject
     [Tooltip("This should be a decimal Value: 1.25 = 1.25 Attacks per Second.")]
     public float attackSpeed;
 
-    [Tooltip("Defines the value of dropped XP, scales with 'level' modifier.")]
-    public float xpToDrop;
-    [Tooltip("Defines the starting power of the 'level' modifier.")]
-    public int startingLevel;
+    [Header("Loot und FX.")]
+    [Tooltip("Defines the item to be dropped.")]
+    public GameObject dropPrefab;
+    [Tooltip("Insert death VFX.")]
+    public GameObject deathVfxPrefab;
 
     public abstract void ExecuteAttack(EnemyBrain enemy);
+
+    public virtual void ExecuteDeath(EnemyBrain enemy)
+    {
+        if (dropPrefab != null)
+        {
+            // Wir nehmen X und Z vom Gegner, aber setzen Y fest auf einen Wert (z. B. 0.5f oder 1.0f)
+            // TODO: MAGIC NUMBER AHHHHHHHH!
+            Vector3 spawnPos = new Vector3(enemy.transform.position.x, 0.5f, enemy.transform.position.z);
+
+            ObjectPoolManager.SpawnObject(dropPrefab, spawnPos, Quaternion.identity, ObjectPoolManager.PoolType.Collectibles);
+        }
+
+        if (deathVfxPrefab != null)
+        {
+            ObjectPoolManager.SpawnObject(deathVfxPrefab, enemy.transform.position, Quaternion.identity, ObjectPoolManager.PoolType.ParticleSystems);
+        }
+
+        ObjectPoolManager.ReturnObjectToPool(enemy.gameObject, ObjectPoolManager.PoolType.GameObjects);
+    }
 }

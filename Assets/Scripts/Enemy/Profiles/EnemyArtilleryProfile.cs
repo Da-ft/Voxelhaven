@@ -34,7 +34,7 @@ public class EnemyArtilleryProfile : EnemyProfileSO
         // Projectile Spawn and FIRE
         GameObject proj = Instantiate(projectileAOE, spawnPos, Quaternion.identity);
 
-        if(proj.TryGetComponent(out ArtilleryProjectile artilleryProj))
+        if (proj.TryGetComponent(out ArtilleryProjectile artilleryProj))
         {
             artilleryProj.Initialize(damage, aoeRadius, launchVelocity);
         }

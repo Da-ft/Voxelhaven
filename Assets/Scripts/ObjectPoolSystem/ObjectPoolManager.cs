@@ -66,7 +66,7 @@ public class ObjectPoolManager : MonoBehaviour
             actionOnDestroy: OnDestroyObject
         );
 
-        // WICHTIGER FIX: Den Pool auch im Dictionary speichern!
+        // Pool auch im Dictionary speichern!
         objectPools.Add(prefab, pool);
     }
 

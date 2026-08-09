@@ -6,7 +6,7 @@ public class PlayerCameraController : MonoBehaviour
     [Header("Zoom")]
     [SerializeField] private float zoomSpeed = 2f;
     [SerializeField] private float zoomLerpSpeed = 10f;
-    [SerializeField] private float minDistance = 8f;  // F�r Isometrie oft etwas h�her ansetzen
+    [SerializeField] private float minDistance = 8f;
     [SerializeField] private float maxDistance = 25f;
 
     private PlayerInput playerInput;
@@ -15,8 +15,6 @@ public class PlayerCameraController : MonoBehaviour
 
     private float targetZoom;
     private float currentZoom;
-
-    // Lifecycle
 
     private void Awake()
     {
@@ -55,7 +53,6 @@ public class PlayerCameraController : MonoBehaviour
         cinemachineFollow.FollowOffset = normalizedOffset * currentZoom;
     }
 
-    // Called by SceneBootstrapper once the avatar has been instantiated.
     public void Initialize(PlayerInput input)
     {
         playerInput = input;

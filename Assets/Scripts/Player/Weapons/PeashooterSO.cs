@@ -15,18 +15,16 @@ public class PeashooterSO : PlayerWeaponSO
         // Sicherheitsabfrage
         if (projectilePrefab == null || player.weaponSpawnPoint == null) return;
 
-        // 1. Projektil spawnen. 
-        // Da der Spieler sich zur Maus/Gegner dreht, zeigt die Rotation des SpawnPoints exakt in Schussrichtung.
+        // spawn projectile in avatar rotation -> lookDir = mousePos
         GameObject proj = Instantiate(projectilePrefab, player.weaponSpawnPoint.position, player.weaponSpawnPoint.rotation);
 
-        // 2. Initialisieren
         if (proj.TryGetComponent(out PeashooterProjectile projectileScript))
         {
-            // Rechnet den Basis-Schaden mit dem globalen Multiplikator aus Player.cs zusammen
+            // TODO: Finalise Dmg Equation from Player Weapons
             float finalDamage = damage * Player.Instance.GlobalDamage;
 
-            // Lebensdauer des Projektils berechnen (Reichweite / Geschwindigkeit)
-            // Verhindert, dass Projektile unendlich weit fliegen und den RAM vollmüllen.
+            // Calc Lifetime
+            // TODO: Rework Lifetime Projectile segment, maybe with vfx?
             float lifeTime = range / projectileSpeed;
 
             projectileScript.Initialize(finalDamage, projectileSpeed, lifeTime);

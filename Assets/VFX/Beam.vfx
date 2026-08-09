@@ -114,19 +114,10 @@ MonoBehaviour:
     - model: {fileID: 8926484042661614687}
       id: 0
       isStickyNote: 0
-    - model: {fileID: 0}
-      id: 0
-      isStickyNote: 0
     - model: {fileID: 8926484042661614717}
       id: 0
       isStickyNote: 0
     - model: {fileID: 8926484042661614693}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661614708}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661614780}
       id: 0
       isStickyNote: 0
     - model: {fileID: 8926484042661614812}
@@ -11064,7 +11055,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: True
+      m_SerializableObject: False
     m_Space: -1
   m_Property:
     name: _vfx_enabled

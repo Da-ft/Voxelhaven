@@ -70,16 +70,6 @@ public class PlayerController : MonoBehaviour
         if (currentWeaponCooldown > 0) currentWeaponCooldown -= Time.deltaTime;
     }
 
-    private void HandleAutoFireToggle()
-    {
-        if (playerInput.AutoFireToggleTriggered)
-        {
-            isAutoFireActive = !isAutoFireActive;
-            Debug.Log($"Auto-Fire ist jetzt: {(isAutoFireActive ? "AN" : "AUS")}");
-        }
-    }
-
-    // --- ROTATION (Maus oder Auto-Aim) ---
     private void HandleRotation()
     {
         if (isAutoFireActive)
@@ -115,12 +105,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // --- MOVEMENT & DASH ---
+    #region Handle Movement & Dash
     private void HandleMovementAndDash()
     {
         ApplyGravity();
-
-        // Dash Starten
+       
         if (playerInput.DashTriggered && dashCooldownTimer <= 0f && !isDashing)
         {
             StartDash();
@@ -145,7 +134,7 @@ public class PlayerController : MonoBehaviour
 
         currentHorizontalVelocity = moveVelocity;
 
-        // Die Bewegung besteht jetzt nur noch aus horizontaler Eingabe + Gravitation
+        // Movement = horizontal input + grav
         Vector3 combined = currentHorizontalVelocity + verticalVelocity;
         controller.Move(combined * Time.deltaTime);
     }
@@ -193,8 +182,9 @@ public class PlayerController : MonoBehaviour
 
         return (camForward * inputDir.z + camRight * inputDir.x).normalized * moveSpeed;
     }
+    #endregion
 
-    // --- COMBAT LOGIC ---
+    #region Combat
     private void HandleCombat()
     {
         if (equippedWeapon == null || isDashing) return;
@@ -243,6 +233,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void HandleAutoFireToggle()
+    {
+        if (playerInput.AutoFireToggleTriggered)
+        {
+            isAutoFireActive = !isAutoFireActive;
+            Debug.Log($"Auto-Fire ist jetzt: {(isAutoFireActive ? "AN" : "AUS")}");
+        }
+    }
+    #endregion
     private void ApplyGravity()
     {
         if (controller.isGrounded && verticalVelocity.y < 0f)

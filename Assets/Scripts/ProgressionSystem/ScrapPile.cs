@@ -34,7 +34,7 @@ public class ScrapPile : MonoBehaviour
     {
         if (spriteRenderer == null || scrapStages == null || scrapStages.Length == 0) return;
 
-        Sprite targetSprite = scrapStages[0].pileSprite; // Fallback auf die erste Stufe
+        Sprite targetSprite = scrapStages[0].pileSprite;
 
         foreach (var stage in scrapStages)
         {

@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
     public int Scrap => scrapAmount;
     public int Mana => manaAmount;
 
-    // Events
     public event Action<GamePhase> OnPhaseChanged;
     public event Action<int> OnScrapChanged;
     public event Action<int> OnManaChanged;
@@ -47,7 +46,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        // Loop starts at Night!
+        // Game-Loop starts at Night!
         StartPhase(GamePhase.Night);
     }
 

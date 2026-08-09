@@ -8,7 +8,7 @@ public class PlayerSetup : MonoBehaviour
     {
         PlayerController controller = GetComponent<PlayerController>();
 
-        // 1. Controller initialisieren (Main Camera zuweisen)
+        // Controller Init, snatch cam
         if (Camera.main != null)
         {
             controller.Initialize(Camera.main.transform);
@@ -18,10 +18,10 @@ public class PlayerSetup : MonoBehaviour
             Debug.LogError("[PlayerSetup] Keine Main Camera in der Szene gefunden!");
         }
 
-        // 2. Avatar beim Player-Singleton anmelden (Kugelsicher!)
+        // Subscribe Avatar to Player Singleton
         Player playerSingleton = Player.Instance;
 
-        // Fallback: Falls PlayerSetup VOR dem Player-Singleton geladen wird
+        // Fallback
         if (playerSingleton == null)
         {
             playerSingleton = FindAnyObjectByType<Player>();
@@ -39,16 +39,14 @@ public class PlayerSetup : MonoBehaviour
 
     private void Start()
     {
-        // 3. Kamera-Setup: Die Kamera in der Szene suchen und verkabeln
+        // Attach Camera
         PlayerCameraController camController = FindAnyObjectByType<PlayerCameraController>();
 
         if (camController != null)
         {
-            // Input an die Kamera weitergeben
             PlayerInput input = GetComponent<PlayerInput>();
             camController.Initialize(input);
 
-            // Cinemachine befehlen, diesen Avatar zu verfolgen
             if (camController.TryGetComponent(out CinemachineCamera cineCam))
             {
                 cineCam.Follow = transform;

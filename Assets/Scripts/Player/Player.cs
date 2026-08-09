@@ -24,7 +24,6 @@ public class Player : MonoBehaviour
     private PlayerController playerController;
 
     // Read-only Properties
-
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
     public bool IsDead => currentHealth <= 0f;
@@ -34,21 +33,15 @@ public class Player : MonoBehaviour
     public float GlobalCritDamage => globalCritDamage;
     public float GlobalProjectileCount => globalProjectileCount;
 
-    // Der Avatar in der aktuellen Szene - unterscheidet sich von diesem persistenten
-    // Singleton-GameObject selbst, Wird von SceneBootstrapper via BindAvatar() gesetzt
     public Transform AvatarTransform { get; private set; }
 
-    // Fassade auf PlayerController.HorizontalVelocity, damit Enemy-Skripte (z. B. für
-    // Leading Shots) nicht direkt auf PlayerController zugreifen müssen.
     public Vector3 AvatarVelocity => playerController != null ? playerController.HorizontalVelocity : Vector3.zero;
 
 
     // Events - consumers (UI, Audio, VFX) Subscribe here; Player never touches them directly
 
-    public event Action<float, float> OnHealthChanged; // (currentHealth, MaxHealth)
+    public event Action<float, float> OnHealthChanged;
     public event Action OnPlayerDied;
-
-    // Lifecycle
 
     private void Awake()
     {
@@ -71,8 +64,7 @@ public class Player : MonoBehaviour
     }
 
     // Public API
-
-    // Wird von SceneBootstrapper aufgerufen, sobald Avatar und PlayerController existieren.
+    // Binds Avatar sobald Avatar und PlayerController existieren.
     public void BindAvatar(Transform avatarTransform, PlayerController controller)
     {
         AvatarTransform = avatarTransform;
@@ -89,7 +81,7 @@ public class Player : MonoBehaviour
         // Fire event, ui gets event
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
-        if(IsDead)
+        if (IsDead)
         {
             OnPlayerDied?.Invoke();
             Debug.Log("Player died!");
@@ -105,7 +97,7 @@ public class Player : MonoBehaviour
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
-    // Erhöht maximale Health, bool für heal der dazugewonnenen maxHP
+    // Increment maxHP, bool für heal der dazugewonnenen maxHP
     public void AddMaxHealth(float amount, bool healAmount = true)
     {
         if (amount <= 0f) return;

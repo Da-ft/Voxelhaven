@@ -22,8 +22,7 @@ public class AutoReturnVFX : MonoBehaviour
 
     private void Update()
     {
-        // ps.IsAlive(true) prüft auch alle untergeordneten Partikelsysteme (Child VFX).
-        // Sobald keine Partikel mehr leben und der Effekt gestoppt ist:
+        // ps.IsAlive(true) prüft auch alle untergeordneten Partikelsysteme (Child VFX)
         if (ps != null && !ps.IsAlive(true))
         {
             ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.ParticleSystems);

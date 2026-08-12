@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float globalAttackSpeed = 1f;
     [SerializeField] private float globalCritRate = 0f; // 0-1 probability
     [SerializeField] private float globalCritDamage = 1.25f; // Multiplier
-    [SerializeField] private float globalProjectileCount = 1f;
+    [SerializeField] private int globalProjectileCount = 1;
     #endregion
 
     // Runtime State
@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
     public float GlobalAttackSpeed => globalAttackSpeed;
     public float GlobalCritRate => globalCritRate;
     public float GlobalCritDamage => globalCritDamage;
-    public float GlobalProjectileCount => globalProjectileCount;
+    public int GlobalProjectileCount => globalProjectileCount;
 
     public Transform AvatarTransform { get; private set; }
 

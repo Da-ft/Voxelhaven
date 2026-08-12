@@ -16,8 +16,12 @@ public class PlayerController : MonoBehaviour
 
     [Header("Combat")]
     [SerializeField] private PlayerWeaponSO equippedWeapon;
-    [SerializeField] private LayerMask enemyLayer;
     [SerializeField] public Transform weaponSpawnPoint;
+    public LayerMask enemyLayer;
+
+    [Header("Combat & Visuals")]
+    [SerializeField] private Transform handSocket;
+    private GameObject spawnedWeaponMesh;
 
     private CharacterController controller;
     private PlayerInput playerInput;
@@ -36,6 +40,7 @@ public class PlayerController : MonoBehaviour
     private bool isAutoFireActive = false;
     private float currentWeaponCooldown;
     private Transform currentTarget;
+    private WeaponInstance currentWeaponInstance;
 
     public Vector3 Velocity => verticalVelocity + currentHorizontalVelocity;
     public bool IsGrounded => controller.isGrounded;
@@ -45,6 +50,15 @@ public class PlayerController : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
+    }
+
+    private void Start()
+    {
+        if (equippedWeapon != null)
+        {
+            currentWeaponInstance = new WeaponInstance(equippedWeapon);
+            EquipWeaponVisual(equippedWeapon);
+        }
     }
 
     public void Initialize(Transform camTransform)
@@ -109,7 +123,7 @@ public class PlayerController : MonoBehaviour
     private void HandleMovementAndDash()
     {
         ApplyGravity();
-       
+
         if (playerInput.DashTriggered && dashCooldownTimer <= 0f && !isDashing)
         {
             StartDash();
@@ -187,16 +201,17 @@ public class PlayerController : MonoBehaviour
     #region Combat
     private void HandleCombat()
     {
-        if (equippedWeapon == null || isDashing) return;
+        if (currentWeaponInstance == null || isDashing) return;
 
         bool shouldFire = false;
+        WeaponStats currentStats = currentWeaponInstance.GetCurrentStats();
 
         if (isAutoFireActive)
         {
             if (currentTarget != null)
             {
                 float sqrDistance = (currentTarget.position - transform.position).sqrMagnitude;
-                if (sqrDistance <= equippedWeapon.range * equippedWeapon.range)
+                if (sqrDistance <= currentStats.range * currentStats.range)
                 {
                     shouldFire = true;
                 }
@@ -209,17 +224,41 @@ public class PlayerController : MonoBehaviour
 
         if (shouldFire && currentWeaponCooldown <= 0f)
         {
-            equippedWeapon.ExecuteAttack(this, currentTarget);
-            currentWeaponCooldown = equippedWeapon.attackCooldown;
+            // Angriff über die Instanz auslösen!
+            currentWeaponInstance.ExecuteAttack(this, currentTarget);
+
+            // Cooldown basierend auf dem AttackSpeed berechnen
+            currentWeaponCooldown = currentStats.GetCooldown();
+        }
+    }
+
+    public void EquipWeaponVisual(PlayerWeaponSO weaponSO)
+    {
+        // Altes Modell zerstören, falls vorhanden
+        if (spawnedWeaponMesh != null)
+        {
+            Destroy(spawnedWeaponMesh);
+        }
+
+        // Welcher Socket soll genutzt werden? (Hand-Socket bevorzugt, sonst weaponSpawnPoint)
+        Transform targetSocket = handSocket != null ? handSocket : weaponSpawnPoint;
+
+        if (weaponSO != null && weaponSO.weaponMeshPrefab != null && targetSocket != null)
+        {
+            // Modell am Hand-Socket instanziieren und als Child anhängen
+            spawnedWeaponMesh = Instantiate(weaponSO.weaponMeshPrefab, targetSocket);
+            spawnedWeaponMesh.transform.localPosition = Vector3.zero;
+            spawnedWeaponMesh.transform.localRotation = Quaternion.identity;
         }
     }
 
     private void FindNearestEnemy()
     {
+        WeaponStats currentStats = currentWeaponInstance.GetCurrentStats();
         currentTarget = null;
         if (equippedWeapon == null) return;
 
-        Collider[] hits = Physics.OverlapSphere(transform.position, equippedWeapon.range, enemyLayer);
+        Collider[] hits = Physics.OverlapSphere(transform.position, currentStats.range, enemyLayer);
         float closestDistanceSqr = Mathf.Infinity;
 
         foreach (Collider hit in hits)

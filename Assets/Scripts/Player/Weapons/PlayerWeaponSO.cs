@@ -2,10 +2,18 @@ using UnityEngine;
 
 public abstract class PlayerWeaponSO : ScriptableObject
 {
-    [Header("Weapon Stats")]
-    public float damage = 10f;
-    public float attackCooldown = 0.5f;
-    public float range = 10f;
+    [Header("Base Stats")]
+    public float baseDamage = 10f;
+    public float baseRange = 3f;
+    public float baseAttackSpeed = 1.5f;
+    [Range(0f, 1f)] public float baseCritRate = 0.05f;
+    public float baseCritDamage = 1.5f;
+    public float baseKnockback = 5f;
+    public int baseProjectileCount = 1;
 
-    public abstract void ExecuteAttack(PlayerController player, Transform currentTarget = null);
+    [Header("Visuals")]
+    [Tooltip("Das 3D-Modell/Prefab der Waffe, das in der Hand des Spielers gehalten wird")]
+    public GameObject weaponMeshPrefab;
+
+    public abstract void ExecuteAttack(PlayerController player, WeaponInstance instance, Transform currentTarget = null);
 }

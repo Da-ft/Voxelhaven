@@ -15,28 +15,25 @@ public class ScytheSO : PlayerWeaponSO
     {
         WeaponStats stats = instance.GetCurrentStats();
 
-        // 1. Visual Effect (Mond-Schwung) abfeuern
+        // Visual Effect
         SpawnSlashVfx(player);
 
-        // 2. Schadensberechnung
+        // Damage Calc
         bool isCrit = Random.value <= stats.critRate;
         float finalDamage = isCrit ? (stats.damage * stats.critDamage) : stats.damage;
 
-        // Alle Gegner im maximalen Radius (stats.Range) suchen
+        // Find Enemy in Radius
         Collider[] hitEnemies = Physics.OverlapSphere(player.transform.position, stats.range, player.enemyLayer);
 
         int hitCount = 0;
 
         foreach (Collider hit in hitEnemies)
         {
-            // Richtungsvektor vom Spieler zum Gegner (Höhenunterschied ignorieren)
             Vector3 dirToEnemy = (hit.transform.position - player.transform.position);
             dirToEnemy.y = 0f;
 
-            // Winkel zwischen Spieler-Blickrichtung und Gegner berechnen
             float angleToEnemy = Vector3.Angle(player.transform.forward, dirToEnemy.normalized);
 
-            // Liegt der Gegner innerhalb der Hälfte unseres Halbmond-Winkels?
             if (angleToEnemy <= slashAngle / 2f)
             {
                 if (hit.TryGetComponent(out EnemyBrain enemy))
@@ -54,13 +51,14 @@ public class ScytheSO : PlayerWeaponSO
     {
         if (slashVfxPrefab == null) return;
 
-        // Spawn am weaponSpawnPoint (falls zugewiesen), sonst direkt am Player
+        // Set Spawnpoint, Fallback Center Player
         Transform spawnPoint = player.weaponSpawnPoint != null ? player.weaponSpawnPoint : player.transform;
 
-        // VFX in Ausrichtung des Spielers spawnen
+        // VFX in Player Dir
         GameObject vfx = Instantiate(slashVfxPrefab, spawnPoint.position, player.transform.rotation);
 
-        // Fallback: Zerstört das VFX nach 1.5 Sekunden, falls es sich nicht selbst aufräumt
+        // Fallback: Destroy VFX
+        // TODO: Pooling!
         Destroy(vfx, 1.5f);
     }
 }

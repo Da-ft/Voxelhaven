@@ -234,18 +234,15 @@ public class PlayerController : MonoBehaviour
 
     public void EquipWeaponVisual(PlayerWeaponSO weaponSO)
     {
-        // Altes Modell zerstören, falls vorhanden
         if (spawnedWeaponMesh != null)
         {
             Destroy(spawnedWeaponMesh);
         }
 
-        // Welcher Socket soll genutzt werden? (Hand-Socket bevorzugt, sonst weaponSpawnPoint)
         Transform targetSocket = handSocket != null ? handSocket : weaponSpawnPoint;
 
         if (weaponSO != null && weaponSO.weaponMeshPrefab != null && targetSocket != null)
         {
-            // Modell am Hand-Socket instanziieren und als Child anhängen
             spawnedWeaponMesh = Instantiate(weaponSO.weaponMeshPrefab, targetSocket);
             spawnedWeaponMesh.transform.localPosition = Vector3.zero;
             spawnedWeaponMesh.transform.localRotation = Quaternion.identity;

@@ -20,12 +20,11 @@ public class SkillNodeSO : ScriptableObject
     [Tooltip("What happens when those Nodes get bought.")]
     public List<SkillEffectSO> effects;
 
-    [Header("In-Run Cost (Rest-Shop)")]
+    [Header("In-Run Cost (UpgradeShop)")]
     public int baseScrapCost = 10;
     public int baseManaCost = 0;
 
-    [Header("Meta-Progression Kosten (Hauptmenü)")]
-    [Tooltip("Kosten in der neuen Meta-Währung (Essenz/Core-Fragmente).")]
+    [Header("Meta Progression Cost")]
     public int metaResourceCost = 50;
 
     [Tooltip("X = CycleCounter, Y = Mult (z.B. 1.0 bei Cycle 1, 2.5 bei Cycle 5). If no definition, Fallback mult is 1!")]
@@ -46,8 +45,8 @@ public class SkillNodeSO : ScriptableObject
 
     public enum NodeType
     {
-        InRunUpgrade,      // Kaufbar im Rest-Screen während eines Runs (Reset nach dem Run)
-        MetaProgression    // Kaufbar im Hauptmenü (Permanente Freischaltung für immer)
+        InRunUpgrade,
+        MetaProgression
     }
 
     [Header("Behavior")]

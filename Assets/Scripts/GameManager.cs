@@ -179,13 +179,12 @@ public class GameManager : MonoBehaviour
         Debug.Log($"[Run-Ende] Gesamter Einnahmen: {totalScrapEarnedThisRun} Scrap, {totalManaEarnedThisRun} Mana. " +
                   $"-> Umgewandelt in {earnedMetaCurrency} Meta-Ressourcen!");
 
-        // Reset Stats for next Run
+        // Reset Stuff for next Run
         totalScrapEarnedThisRun = 0;
         totalManaEarnedThisRun = 0;
         scrapAmount = 0;
         manaAmount = 0;
 
-        // Reset Run-Upgrades
         SkillTreeManager.Instance.ResetRunUpgrades();
     }
 }

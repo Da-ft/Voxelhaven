@@ -23,6 +23,16 @@ public class GameManager : MonoBehaviour
     private int scrapAmount;
     private int manaAmount;
 
+    [Header("Run Totals")]
+    private int totalScrapEarnedThisRun = 0;
+    private int totalManaEarnedThisRun = 0;
+
+    [Header("Meta-Progression Conversion Rates")]
+    [Tooltip("Wie viel 1 Scrap in Meta-Währung wert ist (z.B. 0.1 = 100 Scrap -> 10 Meta-Punkte)")]
+    [SerializeField] private float scrapToMetaRatio = 0.1f;
+    [Tooltip("Wie viel 1 Mana in Meta-Währung wert ist (z.B. 0.5 = 20 Mana -> 10 Meta-Punkte)")]
+    [SerializeField] private float manaToMetaRatio = 0.5f;
+
     // ReadOnly Properties für UI
     public int Scrap => scrapAmount;
     public int Mana => manaAmount;
@@ -121,13 +131,19 @@ public class GameManager : MonoBehaviour
     // Resource Logic Stuff
     public void AddScrap(int amount)
     {
+        if (amount <= 0) return;
+
         scrapAmount += amount;
+        totalScrapEarnedThisRun += amount;
         OnScrapChanged?.Invoke(scrapAmount);
     }
 
     public void AddMana(int amount)
     {
+        if (amount <= 0) return;
+
         manaAmount += amount;
+        totalManaEarnedThisRun += amount;
         OnManaChanged?.Invoke(manaAmount);
     }
 
@@ -143,5 +159,33 @@ public class GameManager : MonoBehaviour
         }
 
         return amountToSteal;
+    }
+
+    // Call on run end or death
+    public void EndRunAndCalculateMetaCurrency()
+    {
+        // Formula: (Scrap Total * ConversionRatio) + (Mana Total * ConversionRatio)
+        int earnedMetaCurrency = Mathf.RoundToInt(
+            (totalScrapEarnedThisRun * scrapToMetaRatio) +
+            (totalManaEarnedThisRun * manaToMetaRatio)
+        );
+
+        // Add Currency to SkillTreeManager
+        if (SkillTreeManager.Instance != null)
+        {
+            SkillTreeManager.Instance.AddMetaCurrency(earnedMetaCurrency);
+        }
+
+        Debug.Log($"[Run-Ende] Gesamter Einnahmen: {totalScrapEarnedThisRun} Scrap, {totalManaEarnedThisRun} Mana. " +
+                  $"-> Umgewandelt in {earnedMetaCurrency} Meta-Ressourcen!");
+
+        // Reset Stats for next Run
+        totalScrapEarnedThisRun = 0;
+        totalManaEarnedThisRun = 0;
+        scrapAmount = 0;
+        manaAmount = 0;
+
+        // Reset Run-Upgrades
+        SkillTreeManager.Instance.ResetRunUpgrades();
     }
 }

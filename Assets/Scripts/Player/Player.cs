@@ -12,11 +12,13 @@ public class Player : MonoBehaviour
     [SerializeField] private float healthRegen = 0f;
 
     [Header("Global Modifier")]
-    [SerializeField] private float globalDamage = 1f;
-    [SerializeField] private float globalAttackSpeed = 1f;
-    [SerializeField] private float globalCritRate = 0f; // 0-1 probability
-    [SerializeField] private float globalCritDamage = 1.25f; // Multiplier
-    [SerializeField] private int globalProjectileCount = 1;
+    [SerializeField] private float damageModifier = 1f;
+    [SerializeField] private float rangeModifier = 1f;
+    [SerializeField] private float attackSpeedModifier = 1f;
+    [SerializeField] private float critRateModifier = 0f; // 0-1 probability
+    [SerializeField] private float critDamageModifier = 1.5f;
+    [SerializeField] private float knockbackModifier = 1f;
+    [SerializeField] private int projectileCountModifier = 1;
     #endregion
 
     // Runtime State
@@ -24,14 +26,17 @@ public class Player : MonoBehaviour
     private PlayerController playerController;
 
     // Read-only Properties
-    public float MaxHealth => maxHealth;
+    public float MaxHealth { get => maxHealth; set => maxHealth = value; }
     public float CurrentHealth => currentHealth;
+    public float HealthRegen { get => healthRegen; set => healthRegen = value; }
+    public float DamageModifier { get => damageModifier; set => damageModifier = value; }
+    public float RangeModifier { get => rangeModifier; set => rangeModifier = value; }
+    public float AttackSpeedModifier { get => attackSpeedModifier; set => attackSpeedModifier = value; }
+    public float CritRateModifier { get => critRateModifier; set => critRateModifier = value; }
+    public float CritDamageModifier { get => critDamageModifier; set => critDamageModifier = value; }
+    public float KnockbackModifier { get => knockbackModifier; set => knockbackModifier = value; }
+    public int ProjectileCountModifier { get => projectileCountModifier; set => projectileCountModifier = value; }
     public bool IsDead => currentHealth <= 0f;
-    public float GlobalDamage => globalDamage;
-    public float GlobalAttackSpeed => globalAttackSpeed;
-    public float GlobalCritRate => globalCritRate;
-    public float GlobalCritDamage => globalCritDamage;
-    public int GlobalProjectileCount => globalProjectileCount;
 
     public Transform AvatarTransform { get; private set; }
 

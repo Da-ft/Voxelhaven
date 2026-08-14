@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c740daf91142024ab805098be236e5f, type: 3}
   m_Name: Scythe
   m_EditorClassIdentifier: Assembly-CSharp::ScytheSO
-  baseDamage: 20
-  baseRange: 3.5
-  baseAttackSpeed: 1.2
-  baseCritRate: 0.05
+  baseDamage: 50
+  baseRange: 5
+  baseAttackSpeed: 3
+  baseCritRate: 1
   baseCritDamage: 1.5
   baseKnockback: 5
   baseProjectileCount: 1

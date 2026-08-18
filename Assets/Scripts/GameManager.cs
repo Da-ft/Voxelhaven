@@ -170,10 +170,10 @@ public class GameManager : MonoBehaviour
             (totalManaEarnedThisRun * manaToMetaRatio)
         );
 
-        // Add Currency to SkillTreeManager
-        if (SkillTreeManager.Instance != null)
+        // Add Currency to UpgradeManager
+        if (UpgradeManager.Instance != null)
         {
-            SkillTreeManager.Instance.AddMetaCurrency(earnedMetaCurrency);
+            UpgradeManager.Instance.AddMetaCurrency(earnedMetaCurrency);
         }
 
         Debug.Log($"[Run-Ende] Gesamter Einnahmen: {totalScrapEarnedThisRun} Scrap, {totalManaEarnedThisRun} Mana. " +
@@ -185,6 +185,6 @@ public class GameManager : MonoBehaviour
         scrapAmount = 0;
         manaAmount = 0;
 
-        SkillTreeManager.Instance.ResetRunUpgrades();
+        UpgradeManager.Instance.ResetRunUpgrades();
     }
 }

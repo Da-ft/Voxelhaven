@@ -12,14 +12,14 @@ public class ShopUpgradeButton : MonoBehaviour
     [SerializeField] private Image iconImage;
     [SerializeField] private Button buyButton;
 
-    [Tooltip("SkillNodeSO this button should show.")]
-    [SerializeField] private SkillNodeSO nodeData;
+    [Tooltip("UpgradeDataSO this button should show.")]
+    [SerializeField] private UpgradeDataSO nodeData;
 
     private void OnEnable()
     {
-        if (SkillTreeManager.Instance != null)
+        if (UpgradeManager.Instance != null)
         {
-            SkillTreeManager.Instance.OnSkillTreeChanged += UpdateVisuals;
+            UpgradeManager.Instance.OnUpgradeChanged += UpdateVisuals;
         }
 
         UpdateVisuals();
@@ -27,9 +27,9 @@ public class ShopUpgradeButton : MonoBehaviour
 
     private void OnDisable()
     {
-        if (SkillTreeManager.Instance != null)
+        if (UpgradeManager.Instance != null)
         {
-            SkillTreeManager.Instance.OnSkillTreeChanged -= UpdateVisuals;
+            UpgradeManager.Instance.OnUpgradeChanged -= UpdateVisuals;
         }
     }
 
@@ -63,7 +63,7 @@ public class ShopUpgradeButton : MonoBehaviour
         if (manaCost > 0) costString += $"<color=#00FFFF>{manaCost} Mana</color>";
         costText.text = costString;
 
-        int purchases = SkillTreeManager.Instance.GetPurchaseCount(nodeData.nodeID);
+        int purchases = UpgradeManager.Instance.GetPurchaseCount(nodeData.upgradeID);
         bool maxReached = false;
 
         if (!nodeData.isRepeatable && purchases > 0)
@@ -98,7 +98,7 @@ public class ShopUpgradeButton : MonoBehaviour
     {
         if (nodeData != null)
         {
-            SkillTreeManager.Instance.AttemptBuyNode(nodeData);
+            UpgradeManager.Instance.AttemptBuyUpgrade(nodeData);
         }
     }
 }

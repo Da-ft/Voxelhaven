@@ -81,7 +81,7 @@ public class RestScreenUI : MonoBehaviour
         upgradesPanel.SetActive(false);
         metaProgressionPanel.SetActive(true);
 
-        // TODO: Read Traits and SkillTreeManager display (Read-Only)
+        // TODO: Read Traits and UpgradeManager display (Read-Only)
     }
 
     public void LeaveRestPhase()

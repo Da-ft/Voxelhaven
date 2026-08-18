@@ -12,16 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51104c29c438e764687af52c6192079f, type: 3}
   m_Name: Node_Schaden
   m_EditorClassIdentifier: Assembly-CSharp::SkillNodeSO
-  nodeID: Node_Damage
+  upgradeID: 
   displayName: Forceful Strike
   description: This is a Description!
   icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  nodeType: 0
+  rarity: 0
+  dropWeight: 100
+  isUnlockedForShop: 1
+  isRepeatable: 1
+  maxPurchases: 0
   parentNodes: []
-  effects:
-  - {fileID: 11400000, guid: 5cb9ee336dbbf134d822c85069226767, type: 2}
   baseScrapCost: 10
   baseManaCost: 0
-  metaResourceCost: 50
   costScalingCurve:
     serializedVersion: 2
     m_Curve:
@@ -46,6 +49,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  nodeType: 0
-  isRepeatable: 0
-  maxPurchases: 0
+  metaResourceCost: 50
+  statModifiers:
+  - statType: 0
+    amount: -10
+    isPercentage: 0
+  - statType: 2
+    amount: 10000
+    isPercentage: 0
+  specialEffects:
+  - {fileID: 0}

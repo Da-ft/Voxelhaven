@@ -19,6 +19,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float critDamageModifier = 1.5f;
     [SerializeField] private float knockbackModifier = 1f;
     [SerializeField] private int projectileCountModifier = 1;
+    [SerializeField] private float luckModifier = 1f;
     #endregion
 
     // Runtime State
@@ -36,6 +37,7 @@ public class Player : MonoBehaviour
     public float CritDamageModifier { get => critDamageModifier; set => critDamageModifier = value; }
     public float KnockbackModifier { get => knockbackModifier; set => knockbackModifier = value; }
     public int ProjectileCountModifier { get => projectileCountModifier; set => projectileCountModifier = value; }
+    public float LuckModifier { get => luckModifier; set => luckModifier = value; }
     public bool IsDead => currentHealth <= 0f;
 
     public Transform AvatarTransform { get; private set; }

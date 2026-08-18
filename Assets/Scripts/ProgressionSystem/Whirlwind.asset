@@ -12,17 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51104c29c438e764687af52c6192079f, type: 3}
   m_Name: Whirlwind
   m_EditorClassIdentifier: Assembly-CSharp::SkillNodeSO
-  nodeID: Node_Whirlwind
+  upgradeID: 
   displayName: Whirlwind Strike
   description: This is a description!
   icon: {fileID: 21300000, guid: 4ce2253285b11004ab7fcd13b9ba1f20, type: 3}
+  nodeType: 0
+  rarity: 0
+  dropWeight: 100
+  isUnlockedForShop: 1
+  isRepeatable: 0
+  maxPurchases: 0
   parentNodes:
   - {fileID: 11400000, guid: 0a65b2648c61fe747a0bdddf3227d356, type: 2}
-  effects:
-  - {fileID: 11400000, guid: 026832421fc14d4498c20385af0bca3b, type: 2}
   baseScrapCost: 10
-  baseManaCost: 0
-  metaResourceCost: 50
+  baseManaCost: 10
   costScalingCurve:
     serializedVersion: 2
     m_Curve:
@@ -47,6 +50,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  nodeType: 0
-  isRepeatable: 0
-  maxPurchases: 0
+  metaResourceCost: 50
+  statModifiers: []
+  specialEffects: []

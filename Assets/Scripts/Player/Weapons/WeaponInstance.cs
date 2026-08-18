@@ -54,9 +54,9 @@ public class WeaponInstance
 
     public void ApplyUnlockedTraits()
     {
-        if (SkillTreeManager.Instance == null) return;
+        if (UpgradeManager.Instance == null) return;
 
-        List<IWeaponTrait> traits = SkillTreeManager.Instance.GetUnlockedTraits();
+        List<IWeaponTrait> traits = UpgradeManager.Instance.GetUnlockedTraits();
         foreach (var trait in traits)
         {
             AddTrait(trait);

@@ -10,6 +10,14 @@ public class ShopDraftSystem : MonoBehaviour
     [Tooltip("Wie viele Karten sollen pro Shop-Besuch ausgewürfelt werden?")]
     [SerializeField] private int cardsToDraft = 3;
 
+    private void Awake()
+    {
+        UpgradeDataSO[] loadedUpgrades = Resources.LoadAll<UpgradeDataSO>("UpgradeSO");
+        allAvailableUpgrades = new List<UpgradeDataSO>(loadedUpgrades);
+
+        Debug.Log($"[ShopDraftManager] {allAvailableUpgrades.Count} Upgrades zur Laufzeit aus Resources geladen.");
+    }
+
     /// <summary>
     /// Generiert eine Liste an zufälligen, kaufbaren Upgrades basierend auf ihrem dropWeight.
     /// </summary>

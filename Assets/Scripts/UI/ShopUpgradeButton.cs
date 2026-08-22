@@ -13,7 +13,7 @@ public class ShopUpgradeButton : MonoBehaviour
     [SerializeField] private Button buyButton;
 
     [Tooltip("UpgradeDataSO this button should show.")]
-    [SerializeField] private UpgradeDataSO nodeData;
+    [SerializeField] private UpgradeDataSO currentData;
 
     private void OnEnable()
     {
@@ -33,20 +33,28 @@ public class ShopUpgradeButton : MonoBehaviour
         }
     }
 
+    public void Setup(UpgradeDataSO draftData)
+    {
+        currentData = draftData;
+        gameObject.SetActive(currentData != null);
+
+        UpdateVisuals();
+    }
+
     /// <summary>
     /// Diese Methode sorgt dafür, dass sich Bild, Text und Zustand des Buttons aktualisieren.
     /// Sie wird automatisch aufgerufen, sobald irgendjemand etwas kauft!
     /// </summary>
     private void UpdateVisuals()
     {
-        if (nodeData == null || GameManager.Instance == null) return;
+        if (currentData == null || GameManager.Instance == null) return;
 
-        titleText.text = nodeData.displayName;
-        descriptionText.text = nodeData.description;
+        titleText.text = currentData.displayName;
+        descriptionText.text = currentData.description;
 
-        if (nodeData.icon != null)
+        if (currentData.icon != null)
         {
-            iconImage.sprite = nodeData.icon;
+            iconImage.sprite = currentData.icon;
             iconImage.enabled = true;
         }
         else
@@ -56,27 +64,27 @@ public class ShopUpgradeButton : MonoBehaviour
 
         // Calc dynamic costs
         int currentCycle = GameManager.Instance.CycleCounter;
-        var (scrapCost, manaCost) = nodeData.GetScaledCosts(currentCycle);
+        var (scrapCost, manaCost) = currentData.GetScaledCosts(currentCycle);
 
         string costString = "";
         if (scrapCost > 0) costString += $"<color=#FFD700>{scrapCost} Scrap</color> ";
         if (manaCost > 0) costString += $"<color=#00FFFF>{manaCost} Mana</color>";
         costText.text = costString;
 
-        int purchases = UpgradeManager.Instance.GetPurchaseCount(nodeData.upgradeID);
+        int purchases = UpgradeManager.Instance.GetPurchaseCount(currentData.upgradeID);
         bool maxReached = false;
 
-        if (!nodeData.isRepeatable && purchases > 0)
+        if (!currentData.isRepeatable && purchases > 0)
         {
             purchaseCountText.text = "Gekauft!";
             maxReached = true;
         }
-        else if (nodeData.isRepeatable)
+        else if (currentData.isRepeatable)
         {
-            if (nodeData.maxPurchases > 0)
+            if (currentData.maxPurchases > 0)
             {
-                purchaseCountText.text = $"{purchases} / {nodeData.maxPurchases}";
-                if (purchases >= nodeData.maxPurchases) maxReached = true;
+                purchaseCountText.text = $"{purchases} / {currentData   .maxPurchases}";
+                if (purchases >= currentData.maxPurchases) maxReached = true;
             }
             else
             {
@@ -96,9 +104,9 @@ public class ShopUpgradeButton : MonoBehaviour
 
     public void OnBuyButtonClicked()
     {
-        if (nodeData != null)
+        if (currentData != null)
         {
-            UpgradeManager.Instance.AttemptBuyUpgrade(nodeData);
+            UpgradeManager.Instance.AttemptBuyUpgrade(currentData);
         }
     }
 }

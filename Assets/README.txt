@@ -11,3 +11,6 @@ THIS IS A README AND UNDER DEVELOPMENT
 
 --- Lincenses ---
 MIT
+Font: Asimovian
+https://fonts.google.com/specimen/Asimovian/license?preview.script=Latn
+OFL (Open Font License)

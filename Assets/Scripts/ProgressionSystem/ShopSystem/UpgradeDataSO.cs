@@ -16,7 +16,7 @@ public class UpgradeDataSO : ScriptableObject
     public int dropWeight = 100;
     public bool isUnlockedForShop = true;
 
-    [Header("Kauf-Regeln")]
+    [Header("Kauf Regeln")]
     public bool isRepeatable = true;
     [Tooltip("Maximale Anzahl an Käufen. Setze auf 0 für unendlich oft kaufbar.")]
     public int maxPurchases = 0;

@@ -16,8 +16,12 @@ public class PlayerController : MonoBehaviour
 
     [Header("Combat")]
     [SerializeField] private PlayerWeaponSO equippedWeapon;
-    [SerializeField] private LayerMask enemyLayer;
     [SerializeField] public Transform weaponSpawnPoint;
+    public LayerMask enemyLayer;
+
+    [Header("Combat & Visuals")]
+    [SerializeField] private Transform handSocket;
+    private GameObject spawnedWeaponMesh;
 
     private CharacterController controller;
     private PlayerInput playerInput;
@@ -36,6 +40,7 @@ public class PlayerController : MonoBehaviour
     private bool isAutoFireActive = false;
     private float currentWeaponCooldown;
     private Transform currentTarget;
+    private WeaponInstance currentWeaponInstance;
 
     public Vector3 Velocity => verticalVelocity + currentHorizontalVelocity;
     public bool IsGrounded => controller.isGrounded;
@@ -45,6 +50,15 @@ public class PlayerController : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
+    }
+
+    private void Start()
+    {
+        if (equippedWeapon != null)
+        {
+            currentWeaponInstance = new WeaponInstance(equippedWeapon);
+            EquipWeaponVisual(equippedWeapon);
+        }
     }
 
     public void Initialize(Transform camTransform)
@@ -70,16 +84,6 @@ public class PlayerController : MonoBehaviour
         if (currentWeaponCooldown > 0) currentWeaponCooldown -= Time.deltaTime;
     }
 
-    private void HandleAutoFireToggle()
-    {
-        if (playerInput.AutoFireToggleTriggered)
-        {
-            isAutoFireActive = !isAutoFireActive;
-            Debug.Log($"Auto-Fire ist jetzt: {(isAutoFireActive ? "AN" : "AUS")}");
-        }
-    }
-
-    // --- ROTATION (Maus oder Auto-Aim) ---
     private void HandleRotation()
     {
         if (isAutoFireActive)
@@ -115,12 +119,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // --- MOVEMENT & DASH ---
+    #region Handle Movement & Dash
     private void HandleMovementAndDash()
     {
         ApplyGravity();
 
-        // Dash Starten
         if (playerInput.DashTriggered && dashCooldownTimer <= 0f && !isDashing)
         {
             StartDash();
@@ -145,7 +148,7 @@ public class PlayerController : MonoBehaviour
 
         currentHorizontalVelocity = moveVelocity;
 
-        // Die Bewegung besteht jetzt nur noch aus horizontaler Eingabe + Gravitation
+        // Movement = horizontal input + grav
         Vector3 combined = currentHorizontalVelocity + verticalVelocity;
         controller.Move(combined * Time.deltaTime);
     }
@@ -193,20 +196,22 @@ public class PlayerController : MonoBehaviour
 
         return (camForward * inputDir.z + camRight * inputDir.x).normalized * moveSpeed;
     }
+    #endregion
 
-    // --- COMBAT LOGIC ---
+    #region Combat
     private void HandleCombat()
     {
-        if (equippedWeapon == null || isDashing) return;
+        if (currentWeaponInstance == null || isDashing) return;
 
         bool shouldFire = false;
+        WeaponStats currentStats = currentWeaponInstance.GetCurrentStats();
 
         if (isAutoFireActive)
         {
             if (currentTarget != null)
             {
                 float sqrDistance = (currentTarget.position - transform.position).sqrMagnitude;
-                if (sqrDistance <= equippedWeapon.range * equippedWeapon.range)
+                if (sqrDistance <= currentStats.range * currentStats.range)
                 {
                     shouldFire = true;
                 }
@@ -219,17 +224,38 @@ public class PlayerController : MonoBehaviour
 
         if (shouldFire && currentWeaponCooldown <= 0f)
         {
-            equippedWeapon.ExecuteAttack(this, currentTarget);
-            currentWeaponCooldown = equippedWeapon.attackCooldown;
+            // Angriff über die Instanz auslösen!
+            currentWeaponInstance.ExecuteAttack(this, currentTarget);
+
+            // Cooldown basierend auf dem AttackSpeed berechnen
+            currentWeaponCooldown = currentStats.GetCooldown();
+        }
+    }
+
+    public void EquipWeaponVisual(PlayerWeaponSO weaponSO)
+    {
+        if (spawnedWeaponMesh != null)
+        {
+            Destroy(spawnedWeaponMesh);
+        }
+
+        Transform targetSocket = handSocket != null ? handSocket : weaponSpawnPoint;
+
+        if (weaponSO != null && weaponSO.weaponMeshPrefab != null && targetSocket != null)
+        {
+            spawnedWeaponMesh = Instantiate(weaponSO.weaponMeshPrefab, targetSocket);
+            spawnedWeaponMesh.transform.localPosition = Vector3.zero;
+            spawnedWeaponMesh.transform.localRotation = Quaternion.identity;
         }
     }
 
     private void FindNearestEnemy()
     {
+        WeaponStats currentStats = currentWeaponInstance.GetCurrentStats();
         currentTarget = null;
         if (equippedWeapon == null) return;
 
-        Collider[] hits = Physics.OverlapSphere(transform.position, equippedWeapon.range, enemyLayer);
+        Collider[] hits = Physics.OverlapSphere(transform.position, currentStats.range, enemyLayer);
         float closestDistanceSqr = Mathf.Infinity;
 
         foreach (Collider hit in hits)
@@ -243,6 +269,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void HandleAutoFireToggle()
+    {
+        if (playerInput.AutoFireToggleTriggered)
+        {
+            isAutoFireActive = !isAutoFireActive;
+            Debug.Log($"Auto-Fire ist jetzt: {(isAutoFireActive ? "AN" : "AUS")}");
+        }
+    }
+    #endregion
     private void ApplyGravity()
     {
         if (controller.isGrounded && verticalVelocity.y < 0f)

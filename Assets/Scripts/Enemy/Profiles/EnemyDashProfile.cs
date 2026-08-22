@@ -17,7 +17,7 @@ public class EnemyDashProfile : EnemyProfileSO
     private IEnumerator DashRoutine(EnemyBrain enemy)
     {
         enemy.IsActionLocked = true;
-
+        // TODO: Charge Anim, Particle Effect etc.
         Debug.Log("CHAAAAAAARGE, oh und hier sollte eine animation oder ein Partikeleffekt sein!");
 
         yield return new WaitForSeconds(chargeTime);

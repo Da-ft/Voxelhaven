@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WaveManager : MonoBehaviour
-{
-    // Singleton-Instanz für einfachen Zugriff von außen (z.B. durch die Diebe)
+{    
     public static WaveManager Instance { get; private set; }
 
     [Header("Spawn Pools")]
@@ -26,7 +25,7 @@ public class WaveManager : MonoBehaviour
     private Coroutine currentWaveRoutine;
     private bool isSubscribed = false;
 
-    // Speichert das von Dieben gestohlene Budget für die nächste Welle
+    // Bonus Thief Budget for later waves
     private int bonusBudget = 0;
 
     private void Awake()
@@ -54,7 +53,7 @@ public class WaveManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Wird von entkommenen Dieben aufgerufen, um das Welle-Budget zu erhöhen.
+    /// Increment Wave budget!
     /// </summary>
     public void AddBonusBudget(int amount)
     {
@@ -71,21 +70,21 @@ public class WaveManager : MonoBehaviour
             GameManager.Instance.OnPhaseChanged += HandlePhaseChanged;
             isSubscribed = true;
 
-            // Falls wir direkt beim Start schon in einer Kampfphase sind, Welle starten!
+            // Fallback wavestart
             HandlePhaseChanged(GameManager.Instance.CurrentPhase);
         }
     }
 
     private void HandlePhaseChanged(GameManager.GamePhase newPhase)
     {
-        // Alte Routine sicherheitshalber stoppen
+        // Stop old coroutine
         if (currentWaveRoutine != null)
         {
             StopCoroutine(currentWaveRoutine);
             currentWaveRoutine = null;
         }
 
-        // Neue Routine starten, falls wir im Kampf sind
+        // Start new coroutine if in combat
         if (newPhase == GameManager.GamePhase.Night && nightEnemies.Length > 0)
         {
             currentWaveRoutine = StartCoroutine(SpawnWaveRoutine(nightEnemies));
@@ -98,34 +97,34 @@ public class WaveManager : MonoBehaviour
 
     private IEnumerator SpawnWaveRoutine(EnemySpawnConfig[] pool)
     {
-        // Budget für die gesamte Phase berechnen (Basis-Budget * Cycle + gestohlenes Bonus-Budget)
+        // Calc Budget (Base-Budget * Cycle + Bonus-Budget)
         int totalBudget = (baseBudget * GameManager.Instance.CycleCounter) + bonusBudget;
 
-        // Bonus-Budget zurücksetzen, da es für diese Welle aufgebraucht wurde
+        // Reset Bonus-Budget Value
         bonusBudget = 0;
 
-        // Budget pro Sub-Wave berechnen
+        // Calc Budget per wave
         int budgetPerSubWave = totalBudget / Mathf.Max(1, subWavesPerPhase);
         int remainingTotalBudget = totalBudget;
 
-        // Sub-Waves abarbeiten
+        // Work through Sub-Waves
         while (remainingTotalBudget > 0)
         {
             int currentSubWaveBudget = Mathf.Min(budgetPerSubWave, remainingTotalBudget);
 
-            // Squad berechnen und einkaufen
+            // Plan Squad and buy in
             List<GameObject> squadToSpawn = BuySquad(pool, currentSubWaveBudget, out int spentBudget);
             remainingTotalBudget -= spentBudget;
 
-            if (squadToSpawn.Count == 0) break; // Nichts mehr einkaufbar
+            if (squadToSpawn.Count == 0) break;
 
-            // Squad physisch spawnen
+            // Spawn Sqaud
             foreach (GameObject enemyPrefab in squadToSpawn)
             {
                 Transform selectedSpawnPoint = null;
                 ScrapDropZone chosenDropZone = null;
 
-                // Prüfen, ob der Gegner ein Dieb ist
+                // Thief call
                 bool isThief = false;
                 if (enemyPrefab.TryGetComponent(out EnemyBrain prefabBrain))
                 {
@@ -135,38 +134,38 @@ public class WaveManager : MonoBehaviour
                     }
                 }
 
-                // SPREAD-LOGIK FOR DIEBE VS. NORMALE GEGNER
+                // Spread-Logic for thieves and normies
                 if (isThief && ScrapDropZone.AllZones.Count > 0)
                 {
-                    // Diebe spawnen an einer zufälligen Diebes-Zone (ScrapDropZone)
+                    // spawn thiefes in ScrapDropZones
                     chosenDropZone = ScrapDropZone.AllZones[Random.Range(0, ScrapDropZone.AllZones.Count)];
                     selectedSpawnPoint = chosenDropZone.transform;
                 }
                 else if (spawnPoints.Length > 0)
                 {
-                    // Normale Gegner spawnen an den normalen SpawnPoints
+                    // spawn normies at normal spawnPoints
                     selectedSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
                 }
 
                 if (selectedSpawnPoint == null) continue;
 
-                // Zufälligen Offset im 2-Meter-Radius um den Spawnpunkt berechnen
+                // Random offset for unstucking enemy spawns
                 Vector3 randomOffset = Random.insideUnitSphere * 2f;
                 randomOffset.y = 0f;
                 Vector3 spawnPos = selectedSpawnPoint.position + randomOffset;
 
-                // Sicherstellen, dass die Position auch WIRKLICH auf dem NavMesh liegt
+                // Pos is really really on the navMesh
                 if (UnityEngine.AI.NavMesh.SamplePosition(spawnPos, out UnityEngine.AI.NavMeshHit hit, 3f, UnityEngine.AI.NavMesh.AllAreas))
                 {
                     spawnPos = hit.position;
                 }
 
-                // Gegner an der berechneten Position spawnen
+                // Spawn Enemy on calc pos
                 GameObject spawnedEnemy = ObjectPoolManager.SpawnObject(enemyPrefab, spawnPos, selectedSpawnPoint.rotation, ObjectPoolManager.PoolType.GameObjects);
 
                 if (spawnedEnemy.TryGetComponent(out EnemyBrain brain))
                 {
-                    // Falls es ein Dieb ist, weisen wir ihm seine Heimatadresse zu
+                    // If thief give home adress
                     if (isThief && chosenDropZone != null)
                     {
                         brain.HomeZone = chosenDropZone.transform;
@@ -175,19 +174,19 @@ public class WaveManager : MonoBehaviour
                     brain.Initialize();
                 }
 
-                // WINZIGE PAUSE (0.08s): Verhindert das Ineinander-Stapeln der Agenten!
+                // Simple delay to unstuck enemy spawns
                 yield return new WaitForSeconds(0.08f);
             }
 
-            // CLEAR OR TIMEOUT - Warten bis Gegner tot sind oder der Timer abläuft
+            // Clear or Timeout waves
             float timer = subWaveTimeout;
             while (timer > 0f && AreEnemiesAlive())
             {
                 timer -= Time.deltaTime;
-                yield return null; // Einen Frame warten
+                yield return null;
             }
 
-            // Schleife geht weiter -> nächste Sub-Wave!
+            // Loop -> next Subwave
         }
     }
 

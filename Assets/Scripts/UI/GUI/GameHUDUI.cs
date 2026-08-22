@@ -17,7 +17,7 @@ public class GameHUDUI : MonoBehaviour
     [SerializeField] private TMP_Text scrapText;
     [SerializeField] private TMP_Text manaText;
 
-    // trennen Subscriptions, falls ein Singleton mal schneller lädt als das andere
+    // disconnect Subscriptions, if one singleton is faster then the others
     private bool isPlayerSubscribed = false;
     private bool isGameManagerSubscribed = false;
 
@@ -59,17 +59,17 @@ public class GameHUDUI : MonoBehaviour
 
     private void TrySubscribe()
     {
-        // 1. Am Player anmelden
+        // Subscribe to Player
         if (!isPlayerSubscribed && Player.Instance != null)
         {
             Player.Instance.OnHealthChanged += UpdateHealthBar;
             isPlayerSubscribed = true;
 
-            // Initialen HP-Wert direkt setzen
+            // Set initital HP
             UpdateHealthBar(Player.Instance.CurrentHealth, Player.Instance.MaxHealth);
         }
 
-        // 2. Am GameManager anmelden
+        // Subscribe to GameManager
         if (!isGameManagerSubscribed && GameManager.Instance != null)
         {
             GameManager.Instance.OnPhaseChanged += UpdatePhaseUI;
@@ -78,7 +78,7 @@ public class GameHUDUI : MonoBehaviour
 
             isGameManagerSubscribed = true;
 
-            // Initiale Werte direkt setzen
+            // Set Initital Value
             UpdatePhaseUI(GameManager.Instance.CurrentPhase);
             UpdateScrapUI(GameManager.Instance.Scrap);
             UpdateManaUI(GameManager.Instance.Mana);
@@ -87,7 +87,7 @@ public class GameHUDUI : MonoBehaviour
 
     private void Unsubscribe()
     {
-        // Memory Leaks verhindern
+        // Do not leak into Memory
         if (isPlayerSubscribed && Player.Instance != null)
         {
             Player.Instance.OnHealthChanged -= UpdateHealthBar;
@@ -104,7 +104,7 @@ public class GameHUDUI : MonoBehaviour
         }
     }
 
-    // --- EVENT HANDLER ---
+    #region Event Handler
 
     private void UpdateHealthBar(float currentHealth, float maxHealth)
     {
@@ -156,4 +156,5 @@ public class GameHUDUI : MonoBehaviour
         if (manaText != null)
             manaText.text = $"Mana: {amount}";
     }
+    #endregion
 }

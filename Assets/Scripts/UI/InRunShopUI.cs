@@ -1,11 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class InRunShopUI : MonoBehaviour
 {
     [SerializeField] private GameObject shopPanel;
     [SerializeField] private ShopDraftSystem draftSystem;
     [SerializeField] private ShopUpgradeButton[] cardButtons;
+
+    [SerializeField] private Button rerollButton;
+    [SerializeField] private TextMeshProUGUI rerollCostText;
 
     private void Start()
     {
@@ -14,6 +19,7 @@ public class InRunShopUI : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnPhaseChanged += HandlePhaseChanged;
+            GameManager.Instance.OnScrapChanged += UpdateRerollButtonState;
         }
     }
 
@@ -22,11 +28,13 @@ public class InRunShopUI : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnPhaseChanged -= HandlePhaseChanged;
+            GameManager.Instance.OnScrapChanged -= UpdateRerollButtonState;
         }
     }
 
     private void HandlePhaseChanged(GameManager.GamePhase newPhase)
     {
+        Debug.Log($"[InRunShopUI] Phasenwechsel erkannt: {newPhase}");
         if (newPhase == GameManager.GamePhase.Rest)
         {
             Time.timeScale = 0f;
@@ -39,6 +47,17 @@ public class InRunShopUI : MonoBehaviour
     }
 
     private void OpenShop()
+    {
+        Debug.Log("[InRunShopUI] OpenShop() wurde gestartet!");
+        RefreshShopCards();
+        UpdateRerollButtonState(GameManager.Instance.Scrap);
+
+        Debug.Log("[InRunShopUI] Karten geladen, aktiviere jetzt das Panel!");
+
+        shopPanel.SetActive(true);
+    }
+
+    private void RefreshShopCards()
     {
         List<UpgradeDataSO> currentDraft = draftSystem.GenerateShopDraft();
 
@@ -53,8 +72,33 @@ public class InRunShopUI : MonoBehaviour
                 cardButtons[i].Setup(null);
             }
         }
+    }
 
-        shopPanel.SetActive(true);
+    public void OnRerollButtonClicked()
+    {
+        int cost = draftSystem.GetCurrentRerollCost();
+
+        if (GameManager.Instance.Scrap >= cost)
+        {
+            GameManager.Instance.StealScrap(cost);
+            draftSystem.RegisterReroll();
+
+            RefreshShopCards();
+            UpdateRerollButtonState(GameManager.Instance.Scrap);
+        }
+    }
+
+    private void UpdateRerollButtonState(int currentScrap)
+    {
+        int cost = draftSystem.GetCurrentRerollCost();
+
+        if (rerollCostText!= null)
+        {
+            rerollCostText.text = $"Reroll\n<color=#FFD700>{cost} Scrap</color>";
+        }
+
+        if (rerollButton != null)
+            rerollButton.interactable = currentScrap >= cost;
     }
 
     private void CloseShop()

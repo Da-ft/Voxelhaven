@@ -10,6 +10,13 @@ public class ShopDraftSystem : MonoBehaviour
     [Tooltip("Wie viele Karten sollen pro Shop-Besuch ausgewürfelt werden?")]
     [SerializeField] private int cardsToDraft = 3;
 
+    [Header("Reroll Settings")]
+    [Tooltip("Base cost for the first Reroll")]
+    private int baseRerollCost = 10;
+    [Tooltip("X-Axis: Count of Current Rerolls, Y-Axis: Mult for Base Cost")]
+    [SerializeField] private AnimationCurve rerollCostCurve = AnimationCurve.Linear(0, 1, 10, 5);
+    private int currentRerolls = 0;
+
     private void Awake()
     {
         UpgradeDataSO[] loadedUpgrades = Resources.LoadAll<UpgradeDataSO>("UpgradeSO");
@@ -18,10 +25,19 @@ public class ShopDraftSystem : MonoBehaviour
         Debug.Log($"[ShopDraftManager] {allAvailableUpgrades.Count} Upgrades zur Laufzeit aus Resources geladen.");
     }
 
-    /// <summary>
-    /// Generiert eine Liste an zufälligen, kaufbaren Upgrades basierend auf ihrem dropWeight.
-    /// </summary>
-    public List<UpgradeDataSO> GenerateShopDraft()
+    public int GetCurrentRerollCost()
+    {
+        float multiplier = rerollCostCurve.Evaluate(currentRerolls);
+        return Mathf.RoundToInt(baseRerollCost * multiplier);
+    }
+
+    public void RegisterReroll()
+    {
+        currentRerolls++;
+    }
+
+    // Generiert eine Liste an zufälligen, kaufbaren Upgrades basierend auf ihrem dropWeight
+        public List<UpgradeDataSO> GenerateShopDraft()
     {
         // 1. Hole alle Karten, die der Spieler überhaupt kaufen DARF
         List<UpgradeDataSO> validPool = GetValidUpgrades();
@@ -46,10 +62,7 @@ public class ShopDraftSystem : MonoBehaviour
         return draftedCards;
     }
 
-    /// <summary>
-    /// Filtert alle Upgrades heraus, die gesperrt sind, deren Max-Level erreicht ist 
-    /// oder deren Voraussetzungen fehlen.
-    /// </summary>
+    // Filtert alle Upgrades heraus, die gesperrt sind, deren Max-Level erreicht ist oder deren Voraussetzungen fehlen
     private List<UpgradeDataSO> GetValidUpgrades()
     {
         List<UpgradeDataSO> valid = new List<UpgradeDataSO>();
@@ -89,9 +102,7 @@ public class ShopDraftSystem : MonoBehaviour
         return valid;
     }
 
-    /// <summary>
-    /// Adaptiert aus der WaveManager-Logik: Wählt ein Upgrade anhand der Gewichte aus.
-    /// </summary>
+    // Adaptiert aus der WaveManager-Logik: Wählt ein Upgrade anhand der Gewichte aus
     private UpgradeDataSO PickRandomWeighted(List<UpgradeDataSO> pool)
     {
         int totalWeight = 0;

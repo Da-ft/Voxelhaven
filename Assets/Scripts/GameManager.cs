@@ -103,7 +103,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // TODO: Link with UI Button to end Rest Phase!
     public void LeaveRestPhase()
     {
         if (CurrentPhase == GamePhase.Rest)

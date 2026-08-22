@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 51104c29c438e764687af52c6192079f, type: 3}
-  m_Name: Node_Schaden
-  m_EditorClassIdentifier: Assembly-CSharp::SkillNodeSO
-  upgradeID: 
-  displayName: Forceful Strike
-  description: This is a Description!
-  icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Name: Node_AttackSpeed
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeDataSO
+  upgradeID: node_attackspeed
+  displayName: Faster Hands
+  description: 10% Jazz Hands :3
+  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   nodeType: 0
   rarity: 0
   dropWeight: 100
@@ -32,15 +32,15 @@ MonoBehaviour:
       time: 1
       value: 1
       inSlope: 0
-      outSlope: 0.44444445
+      outSlope: 0.21052632
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 10
+      time: 20
       value: 5
-      inSlope: 0.44444445
+      inSlope: 0.21052632
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
@@ -51,11 +51,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   metaResourceCost: 50
   statModifiers:
-  - statType: 0
-    amount: -10
-    isPercentage: 0
-  - statType: 2
-    amount: 10000
-    isPercentage: 0
-  specialEffects:
-  - {fileID: 0}
+  - statType: 4
+    amount: 10
+    isPercentage: 1
+  specialEffects: []

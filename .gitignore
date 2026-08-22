@@ -10,7 +10,6 @@
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 /[Uu]ser[Ss]ettings/
-*.log
 
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
@@ -65,3 +64,5 @@ crashlytics-build.properties
 
 
 UserSettings/Layouts/default-6000.dwlt
+
+UserSettings/EditorUserSettings.asset

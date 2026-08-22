@@ -1,0 +1,260 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class WaveManager : MonoBehaviour
+{    
+    public static WaveManager Instance { get; private set; }
+
+    [Header("Spawn Pools")]
+    public EnemySpawnConfig[] nightEnemies;
+    public EnemySpawnConfig[] dayEnemies;
+
+    [Header("Spawn Points")]
+    [Tooltip("Zufällige Punkte, an denen normale Gegner spawnen können")]
+    public Transform[] spawnPoints;
+
+    [Header("Pacing Settings")]
+    [Tooltip("Basis-Budget für Zyklus 1")]
+    public int baseBudget = 100;
+    [Tooltip("In wie viele Gruppen (Sub-Waves) soll das Budget aufgeteilt werden?")]
+    public int subWavesPerPhase = 3;
+    [Tooltip("Max. Wartezeit (Sekunden) bis die nächste Sub-Wave spawnt, auch wenn noch Gegner leben.")]
+    public float subWaveTimeout = 20f;
+
+    private Coroutine currentWaveRoutine;
+    private bool isSubscribed = false;
+
+    // Bonus Thief Budget for later waves
+    private int bonusBudget = 0;
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+    }
+
+    private void OnEnable()
+    {
+        TrySubscribe();
+    }
+
+    private void Start()
+    {
+        TrySubscribe();
+    }
+
+    private void OnDisable()
+    {
+        if (isSubscribed && GameManager.Instance != null)
+        {
+            GameManager.Instance.OnPhaseChanged -= HandlePhaseChanged;
+            isSubscribed = false;
+        }
+    }
+
+    /// <summary>
+    /// Increment Wave budget!
+    /// </summary>
+    public void AddBonusBudget(int amount)
+    {
+        bonusBudget += amount;
+        Debug.Log($"[WaveManager] Bonus-Budget um {amount} erhöht! Aktuelles Bonus-Budget für nächste Welle: {bonusBudget}");
+    }
+
+    private void TrySubscribe()
+    {
+        if (isSubscribed) return;
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnPhaseChanged += HandlePhaseChanged;
+            isSubscribed = true;
+
+            // Fallback wavestart
+            HandlePhaseChanged(GameManager.Instance.CurrentPhase);
+        }
+    }
+
+    private void HandlePhaseChanged(GameManager.GamePhase newPhase)
+    {
+        // Stop old coroutine
+        if (currentWaveRoutine != null)
+        {
+            StopCoroutine(currentWaveRoutine);
+            currentWaveRoutine = null;
+        }
+
+        // Start new coroutine if in combat
+        if (newPhase == GameManager.GamePhase.Night && nightEnemies.Length > 0)
+        {
+            currentWaveRoutine = StartCoroutine(SpawnWaveRoutine(nightEnemies));
+        }
+        else if (newPhase == GameManager.GamePhase.Day && dayEnemies.Length > 0)
+        {
+            currentWaveRoutine = StartCoroutine(SpawnWaveRoutine(dayEnemies));
+        }
+    }
+
+    private IEnumerator SpawnWaveRoutine(EnemySpawnConfig[] pool)
+    {
+        // Calc Budget (Base-Budget * Cycle + Bonus-Budget)
+        int totalBudget = (baseBudget * GameManager.Instance.CycleCounter) + bonusBudget;
+
+        // Reset Bonus-Budget Value
+        bonusBudget = 0;
+
+        // Calc Budget per wave
+        int budgetPerSubWave = totalBudget / Mathf.Max(1, subWavesPerPhase);
+        int remainingTotalBudget = totalBudget;
+
+        // Work through Sub-Waves
+        while (remainingTotalBudget > 0)
+        {
+            int currentSubWaveBudget = Mathf.Min(budgetPerSubWave, remainingTotalBudget);
+
+            // Plan Squad and buy in
+            List<GameObject> squadToSpawn = BuySquad(pool, currentSubWaveBudget, out int spentBudget);
+            remainingTotalBudget -= spentBudget;
+
+            if (squadToSpawn.Count == 0) break;
+
+            // Spawn Sqaud
+            foreach (GameObject enemyPrefab in squadToSpawn)
+            {
+                Transform selectedSpawnPoint = null;
+                ScrapDropZone chosenDropZone = null;
+
+                // Thief call
+                bool isThief = false;
+                if (enemyPrefab.TryGetComponent(out EnemyBrain prefabBrain))
+                {
+                    if (prefabBrain.enemyProfile is EnemyThiefProfile)
+                    {
+                        isThief = true;
+                    }
+                }
+
+                // Spread-Logic for thieves and normies
+                if (isThief && ScrapDropZone.AllZones.Count > 0)
+                {
+                    // spawn thiefes in ScrapDropZones
+                    chosenDropZone = ScrapDropZone.AllZones[Random.Range(0, ScrapDropZone.AllZones.Count)];
+                    selectedSpawnPoint = chosenDropZone.transform;
+                }
+                else if (spawnPoints.Length > 0)
+                {
+                    // spawn normies at normal spawnPoints
+                    selectedSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+                }
+
+                if (selectedSpawnPoint == null) continue;
+
+                // Random offset for unstucking enemy spawns
+                Vector3 randomOffset = Random.insideUnitSphere * 2f;
+                randomOffset.y = 0f;
+                Vector3 spawnPos = selectedSpawnPoint.position + randomOffset;
+
+                // Pos is really really on the navMesh
+                if (UnityEngine.AI.NavMesh.SamplePosition(spawnPos, out UnityEngine.AI.NavMeshHit hit, 3f, UnityEngine.AI.NavMesh.AllAreas))
+                {
+                    spawnPos = hit.position;
+                }
+
+                // Spawn Enemy on calc pos
+                GameObject spawnedEnemy = ObjectPoolManager.SpawnObject(enemyPrefab, spawnPos, selectedSpawnPoint.rotation, ObjectPoolManager.PoolType.GameObjects);
+
+                if (spawnedEnemy.TryGetComponent(out EnemyBrain brain))
+                {
+                    // If thief give home adress
+                    if (isThief && chosenDropZone != null)
+                    {
+                        brain.HomeZone = chosenDropZone.transform;
+                    }
+
+                    brain.Initialize();
+                }
+
+                // Simple delay to unstuck enemy spawns
+                yield return new WaitForSeconds(0.08f);
+            }
+
+            // Clear or Timeout waves
+            float timer = subWaveTimeout;
+            while (timer > 0f && AreEnemiesAlive())
+            {
+                timer -= Time.deltaTime;
+                yield return null;
+            }
+
+            // Loop -> next Subwave
+        }
+    }
+
+    private List<GameObject> BuySquad(EnemySpawnConfig[] pool, int maxBudget, out int spent)
+    {
+        List<GameObject> squad = new List<GameObject>();
+        Dictionary<EnemySpawnConfig, int> spawnedCounts = new Dictionary<EnemySpawnConfig, int>();
+        spent = 0;
+        int currentBudget = maxBudget;
+
+        int currentCycle = GameManager.Instance.CycleCounter;
+
+        while (currentBudget > 0)
+        {
+            List<(EnemySpawnConfig config, int dynWeight)> validOptions = new List<(EnemySpawnConfig, int)>();
+            int totalWeight = 0;
+
+            foreach (var enemy in pool)
+            {
+                if (currentCycle < enemy.minCycleToSpawn) continue;
+
+                spawnedCounts.TryGetValue(enemy, out int currentCount);
+                bool underLimit = enemy.maxPerSubWave <= 0 || currentCount < enemy.maxPerSubWave;
+
+                if (enemy.cost <= currentBudget && underLimit)
+                {
+                    int cyclesActive = currentCycle - enemy.minCycleToSpawn;
+                    int dynamicWeight = enemy.baseWeight + (enemy.weightIncreasePerCycle * cyclesActive);
+                    dynamicWeight = Mathf.Max(1, dynamicWeight);
+
+                    validOptions.Add((enemy, dynamicWeight));
+                    totalWeight += dynamicWeight;
+                }
+            }
+
+            if (validOptions.Count == 0) break;
+
+            int randomValue = Random.Range(0, totalWeight);
+            int cumulativeWeight = 0;
+            EnemySpawnConfig chosenEnemy = null;
+
+            foreach (var option in validOptions)
+            {
+                cumulativeWeight += option.dynWeight;
+                if (randomValue < cumulativeWeight)
+                {
+                    chosenEnemy = option.config;
+                    break;
+                }
+            }
+
+            if (chosenEnemy != null)
+            {
+                squad.Add(chosenEnemy.enemyPrefab);
+                currentBudget -= chosenEnemy.cost;
+                spent += chosenEnemy.cost;
+
+                if (!spawnedCounts.ContainsKey(chosenEnemy)) spawnedCounts[chosenEnemy] = 0;
+                spawnedCounts[chosenEnemy]++;
+            }
+        }
+
+        return squad;
+    }
+
+    private bool AreEnemiesAlive()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        return enemies.Length > 0;
+    }
+}

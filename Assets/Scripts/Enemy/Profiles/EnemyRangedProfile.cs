@@ -12,17 +12,17 @@ public class EnemyRangedProfile : EnemyProfileSO
     {
         if (projectilePrefab == null) return;
 
-        // Startposition etwas über dem Boden (z.B. Brusthöhe des Gegners)
+        // startposition, slightly above waist
         Vector3 spawnPos = enemy.transform.position + Vector3.up * 1.5f;
 
-        // Zielrichtung zum Spieler berechnen
+        // Aim at Player
         Vector3 targetPos = enemy.PlayerTarget.position + Vector3.up * 1.5f; // Zielt auf die Brust des Spielers
         Vector3 direction = (targetPos - spawnPos).normalized;
 
-        // Projektil spawnen und in Richtung des Spielers drehen
+        // Spawn projectile, rotate towards player
         GameObject projectileObj = Instantiate(projectilePrefab, spawnPos, Quaternion.LookRotation(direction));
 
-        // Skript auf dem Projektil aufrufen, um Werte zu übergeben
+        // Call projectile
         if (projectileObj.TryGetComponent(out EnemyProjectile projectile))
         {
             projectile.Initialize(damage, projectileSpeed);

@@ -32,17 +32,18 @@ public abstract class EnemyProfileSO : ScriptableObject
     {
         if (dropPrefab != null)
         {
-            Vector3 spawnPos = enemy.transform.position + Vector3.up * 0.5f;
-            Instantiate(dropPrefab, spawnPos, Quaternion.identity);
-            // TODO: Pooling
+            // Wir nehmen X und Z vom Gegner, aber setzen Y fest auf einen Wert (z. B. 0.5f oder 1.0f)
+            // TODO: MAGIC NUMBER AHHHHHHHH!
+            Vector3 spawnPos = new Vector3(enemy.transform.position.x, 0.5f, enemy.transform.position.z);
+
+            ObjectPoolManager.SpawnObject(dropPrefab, spawnPos, Quaternion.identity, ObjectPoolManager.PoolType.Collectibles);
         }
 
         if (deathVfxPrefab != null)
         {
-            Instantiate(deathVfxPrefab, enemy.transform.position, Quaternion.identity);
-            // TODO: Pooling
+            ObjectPoolManager.SpawnObject(deathVfxPrefab, enemy.transform.position, Quaternion.identity, ObjectPoolManager.PoolType.ParticleSystems);
         }
-        // TODO: Pooling
-        Destroy(enemy.gameObject);  
+
+        ObjectPoolManager.ReturnObjectToPool(enemy.gameObject, ObjectPoolManager.PoolType.GameObjects);
     }
 }

@@ -6,8 +6,8 @@ public class PlayerCameraController : MonoBehaviour
     [Header("Zoom")]
     [SerializeField] private float zoomSpeed = 2f;
     [SerializeField] private float zoomLerpSpeed = 10f;
-    [SerializeField] private float minDistance = 3f;
-    [SerializeField] private float maxDistance = 15f;
+    [SerializeField] private float minDistance = 8f;
+    [SerializeField] private float maxDistance = 25f;
 
     private PlayerInput playerInput;
     private CinemachineFollow cinemachineFollow;
@@ -16,12 +16,9 @@ public class PlayerCameraController : MonoBehaviour
     private float targetZoom;
     private float currentZoom;
 
-    // Lifecycle
-
     private void Awake()
     {
         // Only resolve local Cinemachine components here.
-        // PlayerInput is injected later via Initialize().
         CinemachineCamera cam = GetComponent<CinemachineCamera>();
         cinemachineFollow = cam.GetComponent<CinemachineFollow>();
 
@@ -38,6 +35,7 @@ public class PlayerCameraController : MonoBehaviour
             Debug.LogWarning("[PlayerCameraController] CinemachineFollow component missing!");
         }
     }
+
     private void Update()
     {
         // Guard: do nothing until Initialize() has been called.
@@ -55,7 +53,6 @@ public class PlayerCameraController : MonoBehaviour
         cinemachineFollow.FollowOffset = normalizedOffset * currentZoom;
     }
 
-    // Called by SceneBootstrapper once the avatar has been instantiated.
     public void Initialize(PlayerInput input)
     {
         playerInput = input;

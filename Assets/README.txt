@@ -8,6 +8,7 @@ THIS IS A README AND UNDER DEVELOPMENT
 - Material Maker v1.7
 - Visual Studio 2022 Community Version
 - Gitkraken
+- Clip Studio Paint
 
 --- Lincenses ---
 MIT

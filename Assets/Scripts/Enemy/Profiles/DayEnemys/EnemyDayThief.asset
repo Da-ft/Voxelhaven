@@ -19,7 +19,7 @@ MonoBehaviour:
   damage: 0
   attackRange: 0
   attackSpeed: 0
-  dropPrefab: {fileID: 0}
+  dropPrefab: {fileID: 7189525440805237327, guid: 3f307fb274222e145a659c36246b7ab7, type: 3}
   deathVfxPrefab: {fileID: 0}
   maxScrapCapacity: 3
   stealDuration: 1.5

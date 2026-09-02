@@ -25,8 +25,22 @@ public class DataPersistenceManager : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // Standard-Pfad für Unity (Windows: AppData/LocalLow/Company/GameName)
-        filePath = Path.Combine(Application.persistentDataPath, fileName);
+        // "Saves" Folder in Game Folder
+        string saveDirectory = Path.Combine(Application.dataPath, "Saves");
+
+        // If no Folder = Create Folder
+        if (!Directory.Exists(saveDirectory))
+        {
+            Directory.CreateDirectory(saveDirectory);
+        }
+
+        // Final Directory Path
+        filePath = Path.Combine(saveDirectory, fileName);
+    }
+
+    private void Start()
+    {
+        LoadGame();
     }
 
     public void NewGame()
@@ -64,7 +78,6 @@ public class DataPersistenceManager : MonoBehaviour
     public void SaveGame()
     {
         if (gameData == null) return;
-
         // Call all registered Scripts to save data to 'gamedata'
         OnSaveData?.Invoke(gameData);
 

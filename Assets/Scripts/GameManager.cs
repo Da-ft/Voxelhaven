@@ -71,6 +71,34 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        if (DataPersistenceManager.instance != null)
+        {
+            DataPersistenceManager.instance.OnLoadData += LoadData;
+            DataPersistenceManager.instance.OnSaveData += SaveData;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (DataPersistenceManager.instance != null)
+        {
+            DataPersistenceManager.instance.OnLoadData -= LoadData;
+            DataPersistenceManager.instance.OnSaveData -= SaveData;
+        }
+    }
+
+    private void LoadData(GameData data)
+    {
+        CycleCounter = data.cycleCount;
+    }
+
+    private void SaveData(GameData data)
+    {
+        data.cycleCount = CycleCounter;
+    }
+
     private void StartPhase(GamePhase newPhase)
     {
         CurrentPhase = newPhase;
@@ -103,7 +131,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // TODO: Link with UI Button to end Rest Phase!
     public void LeaveRestPhase()
     {
         if (CurrentPhase == GamePhase.Rest)

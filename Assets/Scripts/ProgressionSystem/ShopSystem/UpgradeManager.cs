@@ -31,6 +31,59 @@ public class UpgradeManager : MonoBehaviour
         Instance = this;
     }
 
+    private void OnEnable()
+    {
+        if (DataPersistenceManager.instance != null)
+        {
+            DataPersistenceManager.instance.OnLoadData += LoadData;
+            DataPersistenceManager.instance.OnSaveData += SaveData;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (DataPersistenceManager.instance != null)
+        {
+            DataPersistenceManager.instance.OnLoadData -= LoadData;
+            DataPersistenceManager.instance.OnSaveData -= SaveData;
+        }
+    }
+
+    private void LoadData(GameData data)
+    {
+        metaCurrencyAmount = data.metaCurrencyAmount;
+
+        upgradePurchaseCounts.Clear();
+
+        // Save Meta Upgrades to Dictionary
+        foreach (var entry in data.metaUpgrades)
+        {
+            upgradePurchaseCounts[entry.upgradeID] = entry.purchaseCount;
+        }
+
+        Debug.Log($"[UpgradeNabager] Meta Currency ({metaCurrencyAmount}) & {data.metaCurrencyAmount}");
+        OnUpgradeChanged?.Invoke();
+    }
+
+    private void SaveData(GameData data)
+    {
+        data.metaCurrencyAmount = metaCurrencyAmount;
+        data.metaUpgrades.Clear();
+
+        // Persistent Meta Upgrades to Json (Ignore In Run Upgrades for now)
+        foreach (var kvp in upgradePurchaseCounts)
+        {
+            if (!activeInRunUpgrades.Contains(kvp.Key))
+            {
+                data.metaUpgrades.Add(new MetaUpgradeSaveEntry
+                {
+                    upgradeID = kvp.Key,
+                    purchaseCount = kvp.Value
+                });
+            }
+        }
+    }
+
     public void AddMetaCurrency(int amount)
     {
         metaCurrencyAmount += amount;

@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -72,7 +73,30 @@ public class EnemyBrain : MonoBehaviour
 
     private void Die()
     {
-        // TODO: Death Logic, Pooling, Dropping XP etc.
+        if (CarriedScrap > 0 && enemyProfile != null && enemyProfile.dropPrefab != null)
+        {
+            for (int i = 0; i < CarriedScrap; i++)
+            {
+                Vector2 randomOffset = Random.insideUnitCircle * 1.5f;
+
+                Vector3 spawnPos = new Vector3(
+                    transform.position.x + randomOffset.x,
+                    0.5f,
+                    transform.position.z + randomOffset.y
+                    );
+
+                ObjectPoolManager.SpawnObject(
+                    enemyProfile.dropPrefab,
+                    spawnPos,
+                    Quaternion.identity,
+                    ObjectPoolManager.PoolType.Collectibles
+                    );
+            }
+
+            Debug.Log($"[EnemyBrain] Thief killed! {CarriedScrap} Scrap dropped.");
+            CarriedScrap = 0;
+        }
+
         enemyProfile.ExecuteDeath(this);
     }
 

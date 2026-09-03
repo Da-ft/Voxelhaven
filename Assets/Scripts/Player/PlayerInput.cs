@@ -30,6 +30,8 @@ public class PlayerInput : MonoBehaviour
 
         controls.Player.Dash.performed += ctx => DashTriggered = true;
         controls.Player.ToggleAutoFire.performed += ctx => AutoFireToggleTriggered = true;
+
+        PauseMenuUI.OnPauseStateChanged += HandlePauseState;
     }
 
     private void OnDisable()
@@ -43,6 +45,8 @@ public class PlayerInput : MonoBehaviour
 
         controls.Player.Dash.performed -= ctx => DashTriggered = true;
         controls.Player.ToggleAutoFire.performed-= ctx => AutoFireToggleTriggered = true;
+
+        PauseMenuUI.OnPauseStateChanged -= HandlePauseState;
 
         controls.Disable();
     }
@@ -61,6 +65,27 @@ public class PlayerInput : MonoBehaviour
     {
         // Scroll events fire once per frame; pendingMouseZoom is consumed in Update().
         pendingMouseZoom = context.ReadValue<Vector2>().y;
+    }
+
+    private void HandlePauseState(bool isPaused)
+    {
+        if (isPaused)
+        {
+            // Deactivate Inputs
+            controls.Disable();
+
+            // fallback against stuck inputs
+            MoveInput = Vector2.zero;
+            ZoomInput = 0f;
+            IsFiring = false;
+            DashTriggered = false;
+            AutoFireToggleTriggered = false;
+        }
+        else
+        {
+            // restart input system
+            controls.Enable();
+        }
     }
 
     private void Update()

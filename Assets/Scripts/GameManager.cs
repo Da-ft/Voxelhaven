@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -69,6 +70,19 @@ public class GameManager : MonoBehaviour
                 EndCurrentPhase();
             }
         }
+
+#if UNITY_EDITOR
+        // Schneller Debug-Cheat auf der Taste F1
+        if (UnityEngine.InputSystem.Keyboard.current != null &&
+            UnityEngine.InputSystem.Keyboard.current.f1Key.wasPressedThisFrame)
+        {
+            // Passe ggf. 'AddScrap' an deine tatsächliche Methode im GameManager an
+            GameManager.Instance.AddMana(100);
+            GameManager.Instance.AddScrap(100);
+
+            Debug.Log("<color=yellow>[DEBUG] 100 Scrap & Mana ercheatet!</color>");
+        }
+#endif
     }
 
     private void OnEnable()

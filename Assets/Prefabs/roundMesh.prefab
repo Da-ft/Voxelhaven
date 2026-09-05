@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6194578596484019467}
   m_Layer: 0
-  m_Name: VFX_Slash
+  m_Name: roundMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -16,4 +16,10 @@ public abstract class PlayerWeaponSO : ScriptableObject
     public GameObject weaponMeshPrefab;
 
     public abstract void ExecuteAttack(PlayerController player, WeaponInstance instance, Transform currentTarget = null);
+
+    public virtual void DrawGizmos(PlayerController player, WeaponStats stats)
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(player.transform.position, stats.range);
+    }
 }

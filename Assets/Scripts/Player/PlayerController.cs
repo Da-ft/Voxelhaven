@@ -84,6 +84,7 @@ public class PlayerController : MonoBehaviour
         if (currentWeaponCooldown > 0) currentWeaponCooldown -= Time.deltaTime;
     }
 
+    #region Handle Movement & Dash
     private void HandleRotation()
     {
         if (isAutoFireActive)
@@ -119,7 +120,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    #region Handle Movement & Dash
     private void HandleMovementAndDash()
     {
         ApplyGravity();
@@ -277,11 +277,39 @@ public class PlayerController : MonoBehaviour
             Debug.Log($"Auto-Fire ist jetzt: {(isAutoFireActive ? "AN" : "AUS")}");
         }
     }
+
+    public void AddTraitToActiveWeapon(IWeaponTrait trait)
+    {
+        if (currentWeaponInstance != null)
+        {
+            currentWeaponInstance.AddTrait(trait);
+        }
+    }
     #endregion
     private void ApplyGravity()
     {
         if (controller.isGrounded && verticalVelocity.y < 0f)
             verticalVelocity.y = -2f;
         verticalVelocity.y += gravity * Time.deltaTime;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (Application.isPlaying && currentWeaponInstance != null)
+        {
+            // Nutzt die aktuellen Laufzeit-Stats (inklusive Boni/Upgrades)
+            currentWeaponInstance.BaseWeapon.DrawGizmos(this, currentWeaponInstance.GetCurrentStats());
+        }
+        else if (equippedWeapon != null)
+        {
+            // Fallback im Editor-Modus ohne laufendes Spiel
+            WeaponStats dummyStats = new WeaponStats
+            {
+                range = equippedWeapon.baseRange,
+                damage = equippedWeapon.baseDamage,
+                attackSpeed = equippedWeapon.baseAttackSpeed
+            };
+            equippedWeapon.DrawGizmos(this, dummyStats);
+        }
     }
 }

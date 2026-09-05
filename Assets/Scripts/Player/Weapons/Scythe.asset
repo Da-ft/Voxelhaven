@@ -22,3 +22,4 @@ MonoBehaviour:
   weaponMeshPrefab: {fileID: 7990107864714939960, guid: 30319194c609a8744923d5d11aac4b8e, type: 3}
   slashAngle: 140
   slashVfxPrefab: {fileID: 8971649475347317198, guid: b7486533388106b49a59a0f1e3a3d1d5, type: 3}
+  vfxRotationOffset: {x: 0, y: 0, z: 0}

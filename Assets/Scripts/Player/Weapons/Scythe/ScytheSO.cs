@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Scythe", menuName = "ScriptableObjects/Weapons/Scythe")]
+[CreateAssetMenu(fileName = "Scythe", menuName = "Weapons/Scythe")]
 public class ScytheSO : PlayerWeaponSO
 {
     [Header("Scythe Arc Settings")]

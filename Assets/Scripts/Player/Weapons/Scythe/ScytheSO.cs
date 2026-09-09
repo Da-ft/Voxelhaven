@@ -45,32 +45,26 @@ public class ScytheSO : PlayerWeaponSO
 
             if (angleToEnemy <= slashAngle / 2f)
             {
-                if (hit.TryGetComponent(out EnemyBrain enemy))
+                // Generisch auf IDamageable prüfen
+                if (hit.TryGetComponent(out IDamageable damageable))
                 {
-                    enemy.TakeDamage(damageInfo);
+                    damageable.TakeDamage(damageInfo);
                     hitCount++;
                 }
             }
         }
 
-        Debug.Log($"[SENSE] Halbmond-Schwung ({slashAngle}°) ausgeführt! {hitCount} Gegner für {finalDamage} Dmg getroffen.");
+        Debug.Log($"[SENSE] Halbmond-Schwung ({slashAngle}°) ausgeführt! {hitCount} Ziele für {finalDamage} Dmg (Crit: {isCrit}) getroffen.");
     }
 
     private void SpawnSlashVfx(PlayerController player)
     {
         if (slashVfxPrefab == null) return;
 
-        // Set Spawnpoint, Fallback Center Player
         Transform spawnPoint = player.weaponSpawnPoint != null ? player.weaponSpawnPoint : player.transform;
-
         Quaternion finalRotation = player.transform.rotation * Quaternion.Euler(vfxRotationOffset);
 
-        // VFX in Player Dir
-
         GameObject vfx = Instantiate(slashVfxPrefab, spawnPoint.position, finalRotation);
-
-        // Fallback: Destroy VFX
-        // TODO: Pooling!
         Destroy(vfx, 1.5f);
     }
 

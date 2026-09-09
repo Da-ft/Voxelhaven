@@ -15,7 +15,7 @@ MonoBehaviour:
   baseDamage: 50
   baseRange: 5
   baseAttackSpeed: 3
-  baseCritRate: 1
+  baseCritRate: 0.2
   baseCritDamage: 1.5
   baseKnockback: 5
   baseProjectileCount: 1

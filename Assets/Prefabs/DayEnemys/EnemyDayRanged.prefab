@@ -232,6 +232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBrain
   enemyProfile: {fileID: 11400000, guid: ea9693a07b0d7884da91490efa3efaa5, type: 2}
   agent: {fileID: 2872788832151704682}
+  floatingTextPrefab: {fileID: 6238944294891371582, guid: 3b1ca1536a6ffb849a43e173a7185e73, type: 3}
   currentHealth: 0
   currentAttackCooldown: 0
   IsActionLocked: 0

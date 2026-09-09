@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyBrain : MonoBehaviour
+public class EnemyBrain : MonoBehaviour, IDamageable
 {
     [Header("Configuration")]
     [Tooltip("Place correct Enemy Scriptable Object!")]
@@ -79,7 +79,23 @@ public class EnemyBrain : MonoBehaviour
     {
         if (floatingTextPrefab == null) return;
 
-        GameObject textObject = Instantiate(floatingTextPrefab, transform.position, Quaternion.identity, transform);
+        // Leichter Zufalls-Offset, damit Zahlen nicht exakt übereinander stehen
+        Vector3 randomOffset = new Vector3(
+            Random.Range(-0.3f, 0.3f),
+            Random.Range(1.2f, 1.8f),
+            Random.Range(-0.3f, 0.3f)
+        );
+
+        Vector3 spawnPos = transform.position + randomOffset;
+
+        // Prefab erzeugen
+        GameObject textObj = Instantiate(floatingTextPrefab, spawnPos, Quaternion.identity);
+
+        // Werte an PopupText übergeben
+        if (textObj.TryGetComponent(out PopupText popupText))
+        {
+            popupText.Setup(damageInfo.amount, damageInfo.isCritical);
+        }
     }
 
     private void Die()

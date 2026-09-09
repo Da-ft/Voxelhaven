@@ -30,14 +30,7 @@ public abstract class EnemyProfileSO : ScriptableObject
 
     public virtual void ExecuteDeath(EnemyBrain enemy)
     {
-        if (dropPrefab != null)
-        {
-            // Wir nehmen X und Z vom Gegner, aber setzen Y fest auf einen Wert (z. B. 0.5f oder 1.0f)
-            // TODO: MAGIC NUMBER AHHHHHHHH!
-            Vector3 spawnPos = new Vector3(enemy.transform.position.x, 0.5f, enemy.transform.position.z);
-
-            ObjectPoolManager.SpawnObject(dropPrefab, spawnPos, Quaternion.identity, ObjectPoolManager.PoolType.Collectibles);
-        }
+        Drop(enemy);
 
         if (deathVfxPrefab != null)
         {
@@ -45,5 +38,16 @@ public abstract class EnemyProfileSO : ScriptableObject
         }
 
         ObjectPoolManager.ReturnObjectToPool(enemy.gameObject, ObjectPoolManager.PoolType.GameObjects);
+    }
+
+    private void Drop(EnemyBrain enemy)
+    {
+        if (dropPrefab != null)
+        {
+            // Wir nehmen X und Z vom Gegner, aber setzen Y fest auf einen Wert (z. B. 0.5f oder 1.0f)
+            Vector3 spawnPos = new Vector3(enemy.transform.position.x, 0.5f, enemy.transform.position.z);
+
+            ObjectPoolManager.SpawnObject(dropPrefab, spawnPos, Quaternion.identity, ObjectPoolManager.PoolType.Collectibles);
+        }
     }
 }

@@ -36,7 +36,7 @@ public class EnemyArtilleryProfile : EnemyProfileSO
 
         if (proj.TryGetComponent(out ArtilleryProjectile artilleryProj))
         {
-            artilleryProj.Initialize(damage, aoeRadius, launchVelocity);
+            artilleryProj.Initialize(damage, aoeRadius, launchVelocity, enemy.gameObject);
         }
     }
 }

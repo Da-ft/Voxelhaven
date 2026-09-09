@@ -1,15 +1,18 @@
 using UnityEngine;
+
 [RequireComponent(typeof(Rigidbody))]
 public class ArtilleryProjectile : MonoBehaviour
 {
     private float damage;
     private float aoeRadius;
+    private GameObject source;
     private bool hasExploded = false;
 
-    public void Initialize(float damageAmount, float radius, Vector3 launchVelocity)
+    public void Initialize(float damageAmount, float radius, Vector3 launchVelocity, GameObject sourceObject = null)
     {
         this.damage = damageAmount;
         this.aoeRadius = radius;
+        this.source = sourceObject;
 
         Rigidbody rb = GetComponent<Rigidbody>();
         rb.useGravity = true;
@@ -32,16 +35,23 @@ public class ArtilleryProjectile : MonoBehaviour
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, aoeRadius);
         foreach (Collider hit in hitColliders)
         {
-            if (hit.CompareTag("Player"))
+            if (hit.CompareTag("Player") && hit.TryGetComponent(out IDamageable damageable))
             {
-                Player.Instance.TakeDamage(damage);
+                DamageInfo info = new DamageInfo
+                {
+                    amount = damage,
+                    isCritical = false,
+                    knockback = 0f,
+                    source = source
+                };
+
+                damageable.TakeDamage(info);
 
                 Debug.Log($"Artillery Damaged Player!");
             }
         }
 
         // TODO: Artillery Particle Effect and Sounds!
-
         // TODO: Pooling for Artillery!
         Destroy(gameObject);
     }

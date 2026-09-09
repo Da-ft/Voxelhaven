@@ -8,6 +8,7 @@ public class EnemyBrain : MonoBehaviour
     [Tooltip("Place correct Enemy Scriptable Object!")]
     public EnemyProfileSO enemyProfile;
     public NavMeshAgent agent;
+    public GameObject floatingTextPrefab;
     public Transform PlayerTarget { get; private set; }
 
     [Header("Runtime Variables (Read Only)")]
@@ -62,13 +63,23 @@ public class EnemyBrain : MonoBehaviour
         currentState?.Enter(this);
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(DamageInfo damageInfo)
     {
-        currentHealth -= amount;
+        currentHealth -= damageInfo.amount;
+
+        ShowFloatingText(damageInfo);
+
         if (currentHealth <= 0)
         {
             Die();
         }
+    }
+
+    private void ShowFloatingText(DamageInfo damageInfo)
+    {
+        if (floatingTextPrefab == null) return;
+
+        GameObject textObject = Instantiate(floatingTextPrefab, transform.position, Quaternion.identity, transform);
     }
 
     private void Die()

@@ -28,17 +28,28 @@ public class ComboSpinTrait : IWeaponTrait
         {
             WeaponStats stats = instance.GetCurrentStats();
 
+            // Schaden und Crit berechnen
             float spinDamage = stats.damage * comboDamageMultiplier;
             bool isCrit = Random.value <= stats.critRate;
             float finalDamage = isCrit ? (spinDamage * stats.critDamage) : spinDamage;
+
+            // Schadenspaket packen
+            DamageInfo damageInfo = new DamageInfo
+            {
+                amount = finalDamage,
+                isCritical = isCrit,
+                knockback = stats.knockback,
+                source = player.gameObject
+            };
 
             Collider[] hitEnemies = Physics.OverlapSphere(player.transform.position, spinRadius, player.enemyLayer);
 
             foreach (Collider hit in hitEnemies)
             {
-                if (hit.TryGetComponent(out EnemyBrain enemy))
+                // Generisch auf IDamageable prüfen
+                if (hit.TryGetComponent(out IDamageable damageable))
                 {
-                    enemy.TakeDamage(finalDamage);
+                    damageable.TakeDamage(damageInfo);
                 }
             }
 
@@ -53,7 +64,7 @@ public class ComboSpinTrait : IWeaponTrait
                 vfx.transform.localScale = vfxPrefab.transform.localScale * vfxScale;
             }
 
-            Debug.Log($"<color=orange>[TRAIT] WIRBELWIND-FINISHER! ({finalDamage} Dmg auf {hitEnemies.Length} Gegner!)</color>");
+            Debug.Log($"<color=orange>[TRAIT] WIRBELWIND-FINISHER! ({finalDamage} Dmg (Crit: {isCrit}) auf {hitEnemies.Length} Ziele!)</color>");
         }
     }
 }

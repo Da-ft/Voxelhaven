@@ -17,7 +17,6 @@ public class EnemyDashProfile : EnemyProfileSO
     private IEnumerator DashRoutine(EnemyBrain enemy)
     {
         enemy.IsActionLocked = true;
-        // TODO: Charge Anim, Particle Effect etc.
         Debug.Log("CHAAAAAAARGE, oh und hier sollte eine animation oder ein Partikeleffekt sein!");
 
         yield return new WaitForSeconds(chargeTime);
@@ -41,10 +40,22 @@ public class EnemyDashProfile : EnemyProfileSO
                 float sqrDistanceToPlayer = (enemy.PlayerTarget.position - enemy.transform.position).sqrMagnitude;
 
                 if (sqrDistanceToPlayer < 1.5f * 1.5f)
-                    Player.Instance.TakeDamage(damage);
+                {
+                    if (Player.Instance != null && Player.Instance.TryGetComponent(out IDamageable damageable))
+                    {
+                        DamageInfo info = new DamageInfo
+                        {
+                            amount = damage,
+                            isCritical = false,
+                            knockback = 0f,
+                            source = enemy.gameObject
+                        };
 
-                Debug.Log($"Dash hat den Spieler getroffen!");
-                hasDealtDamage = true;
+                        damageable.TakeDamage(info);
+                        Debug.Log($"Dash hat den Spieler getroffen!");
+                        hasDealtDamage = true;
+                    }
+                }
             }
             timer += Time.deltaTime;
             yield return null;

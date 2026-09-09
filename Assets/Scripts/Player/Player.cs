@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using UnityEngine.UIElements;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IDamageable
 {
     public static Player Instance { get; private set; }
 
@@ -79,11 +79,11 @@ public class Player : MonoBehaviour
     }
 
     // Health and Damage Logic
-    public void TakeDamage(float amount)
+    public void TakeDamage(DamageInfo damageInfo)
     {
-        if (IsDead || amount <= 0f) return;
+        if (IsDead || damageInfo.amount <= 0f) return;
 
-        currentHealth = Mathf.Clamp(currentHealth - amount, 0f, maxHealth);
+        currentHealth = Mathf.Clamp(currentHealth - damageInfo.amount, 0f, maxHealth);
 
         // Fire event, ui gets event
         OnHealthChanged?.Invoke(currentHealth, maxHealth);

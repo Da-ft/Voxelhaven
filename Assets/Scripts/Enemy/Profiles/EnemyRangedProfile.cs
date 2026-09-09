@@ -22,10 +22,10 @@ public class EnemyRangedProfile : EnemyProfileSO
         // Spawn projectile, rotate towards player
         GameObject projectileObj = Instantiate(projectilePrefab, spawnPos, Quaternion.LookRotation(direction));
 
-        // Call projectile
+        // Call projectile & pass source
         if (projectileObj.TryGetComponent(out EnemyProjectile projectile))
         {
-            projectile.Initialize(damage, projectileSpeed);
+            projectile.Initialize(damage, projectileSpeed, enemy.gameObject);
         }
     }
 }

@@ -56,15 +56,28 @@ public class BeamWeaponSO : PlayerWeaponSO
                 // Kleine Toleranz, damit nebeneinander stehende Ziele im breiten Strahl gleichzeitig getroffen werden
                 if (hit.distance <= currentRange + 0.1f)
                 {
-                    if (hit.collider.TryGetComponent(out EnemyBrain enemy))
+                    // Prüfung auf generisches IDamageable
+                    if (hit.collider.TryGetComponent(out IDamageable damageable))
                     {
-                        // TODO: Crits
-                        enemy.TakeDamage(tickDamage);
+                        // Crit individuell pro Tick berechnen
+                        bool isCrit = Random.value <= stats.critRate;
+                        float finalDamage = isCrit ? (tickDamage * stats.critDamage) : tickDamage;
+
+                        // DamagePackage
+                        DamageInfo damageInfo = new DamageInfo
+                        {
+                            amount = finalDamage,
+                            isCritical = isCrit,
+                            knockback = stats.knockback * 0.1f,
+                            source = player.gameObject
+                        };
+
+                        // 4. Schaden senden
+                        damageable.TakeDamage(damageInfo);
                     }
                 }
             }
         }
-
 
         // give length back to vfx graph
         beamCtrl.UpdateBeamVisuals(currentRange);

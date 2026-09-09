@@ -4,12 +4,14 @@ public class EnemyProjectile : MonoBehaviour
 {
     private float damage;
     private float speed;
+    private GameObject source;
     private bool isInitialized = false;
 
-    public void Initialize(float damageAmount, float moveSpeed)
+    public void Initialize(float damageAmount, float moveSpeed, GameObject sourceObject = null)
     {
         this.damage = damageAmount;
         this.speed = moveSpeed;
+        this.source = sourceObject;
         this.isInitialized = true;
 
         // TODO: Back to the bulletpool at the end of lifetime
@@ -24,11 +26,19 @@ public class EnemyProjectile : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other)
-    {      
-        // Player needs tag:"Player" and collider
-        if (other.CompareTag("Player"))
+    {
+        // Player needs tag:"Player" and IDamageable
+        if (other.CompareTag("Player") && other.TryGetComponent(out IDamageable damageable))
         {
-            Player.Instance.TakeDamage(damage);
+            DamageInfo info = new DamageInfo
+            {
+                amount = damage,
+                isCritical = false,
+                knockback = 0f,
+                source = source
+            };
+
+            damageable.TakeDamage(info);
 
             Debug.Log($"Projektil trifft Spieler für {damage} Schaden!");
             Destroy(gameObject);

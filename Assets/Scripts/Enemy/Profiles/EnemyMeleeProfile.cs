@@ -5,10 +5,17 @@ public class EnemyMeleeProfile : EnemyProfileSO
 {
     public override void ExecuteAttack(EnemyBrain enemy)
     {
-        Player.Instance.TakeDamage(damage);
+        DamageInfo damageInfo = new DamageInfo
+        {
+            amount = damage,
+            isCritical = false,
+            knockback = 0f,
+            source = enemy.gameObject
+        };
 
-        Debug.Log($"{enemy.gameObject.name} macht {damage} Nahkampf-Schaden!");
-
-        // TODO: Partikel-Effekte oder Sounds für den Melee-Hit
+        if (Player.Instance != null)
+        {
+            Player.Instance.TakeDamage(damageInfo);
+        }
     }
 }

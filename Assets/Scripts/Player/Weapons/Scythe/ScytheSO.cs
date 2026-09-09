@@ -23,6 +23,14 @@ public class ScytheSO : PlayerWeaponSO
         bool isCrit = Random.value <= stats.critRate;
         float finalDamage = isCrit ? (stats.damage * stats.critDamage) : stats.damage;
 
+        DamageInfo damageInfo = new DamageInfo
+        {
+            amount = finalDamage,
+            isCritical = isCrit,
+            knockback = stats.knockback,
+            source = player.gameObject
+        };
+
         // Find Enemy in Radius
         Collider[] hitEnemies = Physics.OverlapSphere(player.transform.position, stats.range, player.enemyLayer);
 
@@ -39,7 +47,7 @@ public class ScytheSO : PlayerWeaponSO
             {
                 if (hit.TryGetComponent(out EnemyBrain enemy))
                 {
-                    enemy.TakeDamage(finalDamage);
+                    enemy.TakeDamage(damageInfo);
                     hitCount++;
                 }
             }
